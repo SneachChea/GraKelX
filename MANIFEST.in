@@ -1,0 +1,25 @@
+include README.md
+include LICENSE
+
+include grakelx/kernels/_c_functions/*.pxd
+include grakelx/kernels/_c_functions/*.pyx
+recursive-include grakelx/kernels/_c_functions/include *
+recursive-include grakelx/kernels/_c_functions/src *
+
+recursive-include grakelx/kernels/_isomorphism/bliss-0.50 *
+recursive-include grakelx/kernels/_isomorphism *
+
+recursive-include tests/data/Cuneiform *
+recursive-include tests/data/MUTAG *
+
+include doc/*.rst
+include doc/conf.py
+include doc/Makefile
+include doc/make.bat
+recursive-include doc/documentation *
+recursive-include doc/benchmarks *
+recursive-include doc/_static *
+recursive-include doc/_templates *
+recursive-include doc/kernels *
+recursive-include doc/sphinxext *
+recursive-include examples *

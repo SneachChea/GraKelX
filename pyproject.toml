@@ -1,0 +1,98 @@
+[build-system]
+requires = ["setuptools>=61.0.0", "cython>=0.29.36", "numpy>=1.23.0"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "grakelx"
+version = "0.1.12"
+description = "A scikit-learn compatible library for graph kernels"
+readme = "README.md"
+license = { text = "BSD-3-Clause" }
+authors = [
+    { name = "Ioannis Siglidis", email = "y.siglidis@gmail.com"},
+    {name = "Shaheen Acheche", email = "neoshaheen@gmail.com"},
+]
+requires-python = ">=3.10,<4.0"
+dependencies = [
+    "numpy>=1.23.0",
+    "cython>=0.29.36",
+    "scikit-learn>=1.0",
+    "scipy>=1.8.0",
+    "six>=1.11.0",
+    "future>=0.16.0",
+    "joblib",
+]
+classifiers = [
+    "Intended Audience :: Science/Research",
+    "Intended Audience :: Developers",
+    "License :: OSI Approved",
+    "Programming Language :: C",
+    "Programming Language :: Python",
+    "Programming Language :: Python :: 3",
+    "Programming Language :: Python :: 3.10",
+    "Programming Language :: Python :: 3.11",
+    "Programming Language :: Python :: 3.12",
+    "Programming Language :: Python :: 3.13",
+    "Topic :: Software Development",
+    "Topic :: Scientific/Engineering",
+    "Operating System :: POSIX",
+    "Operating System :: Unix",
+    "Operating System :: MacOS",
+]
+
+[project.optional-dependencies]
+lovasz = ["cvxopt>=1.2.0"]
+io = ["networkx>=3,<4", "pandas"]
+torch = ["torch", "torch-geometric"]
+examples = ["nltk", "networkx>=3,<4"]
+tutorials = ["matplotlib", "nltk", "networkx>=3,<4"]
+docs = ["sphinx", "sphinx-rtd-theme", "numpydoc", "sphinx-gallery", "sphinxcontrib-bibtex"]
+
+[project.urls]
+Documentation = "https://ysig.github.io/GraKeL/"
+Homepage = "https://github.com/SneachChea/GraKelX"
+Repository = "https://github.com/SneachChea/GraKelX"
+"Source Code" = "https://github.com/SneachChea/GraKelX"
+"Issue Tracker" = "https://github.com/SneachChea/GraKelX/issues"
+
+[tool.setuptools]
+packages = { find = { include = ["grakelx*"], namespaces = false } }
+
+[dependency-groups]
+dev = [
+    "pytest>=7.0",
+    "pytest-cov>=4.0",
+    "pre-commit>=3.7",
+    "ruff>=0.6.0",
+    "black>=24.0.0",
+    "isort>=5.13.0",
+]
+test = [
+    "pytest>=7.0",
+    "pytest-cov>=4.0",
+    "setuptools",
+    "wheel",
+]
+
+[tool.black]
+line-length = 130
+target-version = ["py310"]
+
+[tool.isort]
+profile = "black"
+line_length = 130
+
+[tool.ruff]
+line-length = 130
+target-version = "py310"
+
+[tool.ruff.lint]
+select = ["E", "F", "I", "W"]
+
+[tool.ruff.lint.per-file-ignores]
+"doc/**" = ["E402", "E722", "E721", "F841", "F821"]
+"examples/**" = ["E402"]
+"tutorials/**" = ["F841"]
+"misc/**" = ["F841", "E501"]
+"setup.py" = ["E402"]
+"grakelx/**" = ["E741"]
