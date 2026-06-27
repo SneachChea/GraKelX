@@ -1,7 +1,8 @@
 # Workflow to build and test wheels
 # =================================
-# This github action gets triggered whenever there is a push to the master branch or a release is created.
-# It generates both wheels and distributions files, making sure their contents are correct via unit-testing.
+# This github action gets triggered whenever a git tag (matching v*) is pushed,
+# or manually via workflow_dispatch. It generates both wheels and distributions
+# files, making sure their contents are correct via unit-testing.
 #
 # Please note that creating a git tag and pushing it (git tag <>; git push --tags) is not
 # sufficient to append the wheels and distribution files to your release.
@@ -25,12 +26,10 @@ on:
         required: false
         type: boolean
 
-  # Bushj
+  # Tag push (e.g. v0.1.12, v1.0.0)
   push:
-    branches:
-      - main
-      # Release branches
-      - "[0-9]+.[0-9]+.X"
+    tags:
+      - "v*"
 
 env:
   package-name: grakelx
@@ -49,7 +48,7 @@ jobs:
       # 1 runner per combination of (os, py)
       matrix:
         os: [ubuntu-latest, windows-latest, macos-latest]
-        py: ["cp310-*", "cp311-*", "cp312-*", "cp313-*"]
+        py: ["cp310", "cp311", "cp312", "cp313"]
       # All workers independent, don't cancel all if one fails
       fail-fast: false
 
@@ -63,12 +62,12 @@ jobs:
         with:
           platforms: all
 
-        # https://cibuildwheel.readthedocs.io/en/1.x/options
+        # https://cibuildwheel.readthedocs.io/en/stable/options
       - name: Build wheels
-        uses: pypa/cibuildwheel@v2.22.0
+        uses: pypa/cibuildwheel@v4.1.0
         env:
           CIBW_BUILD_FRONTEND: "build"
-          CIBW_BUILD: ${{ matrix.py }}
+          CIBW_BUILD: ${{ matrix.py }}-*
           CIBW_ARCHS_MACOS: x86_64 universal2
           CIBW_ARCHS_LINUX: x86_64 aarch64
           # No win32 ("x86") for Windows as scipy declared it has stopped releasing wheels
@@ -83,10 +82,11 @@ jobs:
           # https://cibuildwheel.readthedocs.io/en/stable/options/#test-skip
           # * Will avoid testing on emulated architectures (aarch64)
           # * Skip trying to test arm64 builds on Intel Macs
-          CIBW_TEST_SKIP: "*-*linux_aarch64 *-macosx_universal2:arm64 "
+          CIBW_TEST_SKIP: "*-*linux_aarch64 *-macosx_universal2:arm64"
 
       - uses: actions/upload-artifact@v4
         with:
+          name: wheels-${{ matrix.os }}-${{ matrix.py }}
           path: ./wheelhouse/*.whl
 
   build_sdist:
@@ -115,19 +115,18 @@ jobs:
       - name: Twine check ${{ env.package-name }}
         run: |
           python -m pip install twine
-          twine_output=`twine check ${{ env.sdist_name }}`
-          twine check ${{env.sdist_name}} --strict
+          twine check --strict ${{ env.sdist_name }}
 
       - name: Extract and test source distribution
         run: |
+          python -m pip install --upgrade pip
           python -m pip install pytest pytest-cov
           tar -xzf ${{ env.sdist_name }} -C /tmp
           sdist_dir="/tmp/${{ env.package-name }}-$(echo ${{ env.sdist_name }} | sed 's/.*-\([0-9.]*\)\.tar\.gz/\1/')"
+          # Install the sdist so its runtime dependencies (numpy, scikit-learn,
+          # scipy, joblib) and Cython-built extensions are available to pytest.
+          python -m pip install "$sdist_dir"
           ${{ env.test-cmd }} "$sdist_dir/tests"
-
-      - name: Install dist
-        run: |
-          python -m pip install ${{ env.sdist_name }}
 
       - name: Verify installed package
         run: |
@@ -136,6 +135,7 @@ jobs:
       - name: Store artifacts
         uses: actions/upload-artifact@v4
         with:
+          name: sdist
           path: dist/*.tar.gz
 
   release_assets:
@@ -150,13 +150,11 @@ jobs:
         uses: actions/download-artifact@v4
         with:
           path: dist
+          merge-multiple: true
 
       - name: Display structure of downloaded files
         run: |
-          ls -R
-          mv dist/artifact/* dist/
-          rm -rf dist/artifact
-          ls -R
+          ls -R dist
 
       - name: Publish a Python distribution to PyPI
         uses: pypa/gh-action-pypi-publish@release/v1

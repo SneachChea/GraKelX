@@ -15,7 +15,6 @@ authors = [
 requires-python = ">=3.10,<4.0"
 dependencies = [
     "numpy>=1.23.0",
-    "cython>=0.29.36",
     "scikit-learn>=1.0",
     "scipy>=1.8.0",
     "six>=1.11.0",
@@ -66,12 +65,15 @@ dev = [
     "ruff>=0.6.0",
     "black>=24.0.0",
     "isort>=5.13.0",
+    "cython>=0.29.36",
+    "setuptools",
 ]
 test = [
     "pytest>=7.0",
     "pytest-cov>=4.0",
     "setuptools",
     "wheel",
+    "cython>=0.29.36",
 ]
 
 [tool.black]

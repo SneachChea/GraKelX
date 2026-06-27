@@ -1096,7 +1096,6 @@ name = "grakelx"
 version = "0.1.12"
 source = { editable = "." }
 dependencies = [
-    { name = "cython" },
     { name = "future" },
     { name = "joblib" },
     { name = "numpy", version = "2.2.6", source = { registry = "https://pypi.org/simple" }, marker = "python_full_version < '3.11'" },
@@ -1149,13 +1148,16 @@ tutorials = [
 [package.dev-dependencies]
 dev = [
     { name = "black" },
+    { name = "cython" },
     { name = "isort" },
     { name = "pre-commit" },
     { name = "pytest" },
     { name = "pytest-cov" },
     { name = "ruff" },
+    { name = "setuptools" },
 ]
 test = [
+    { name = "cython" },
     { name = "pytest" },
     { name = "pytest-cov" },
     { name = "setuptools" },
@@ -1165,7 +1167,6 @@ test = [
 [package.metadata]
 requires-dist = [
     { name = "cvxopt", marker = "extra == 'lovasz'", specifier = ">=1.2.0" },
-    { name = "cython", specifier = ">=0.29.36" },
     { name = "future", specifier = ">=0.16.0" },
     { name = "joblib" },
     { name = "matplotlib", marker = "extra == 'tutorials'" },
@@ -1192,13 +1193,16 @@ provides-extras = ["lovasz", "io", "torch", "examples", "tutorials", "docs"]
 [package.metadata.requires-dev]
 dev = [
     { name = "black", specifier = ">=24.0.0" },
+    { name = "cython", specifier = ">=0.29.36" },
     { name = "isort", specifier = ">=5.13.0" },
     { name = "pre-commit", specifier = ">=3.7" },
     { name = "pytest", specifier = ">=7.0" },
     { name = "pytest-cov", specifier = ">=4.0" },
     { name = "ruff", specifier = ">=0.6.0" },
+    { name = "setuptools" },
 ]
 test = [
+    { name = "cython", specifier = ">=0.29.36" },
     { name = "pytest", specifier = ">=7.0" },
     { name = "pytest-cov", specifier = ">=4.0" },
     { name = "setuptools" },
