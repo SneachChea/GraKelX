@@ -123,14 +123,22 @@ jobs:
           python -m pip install pytest pytest-cov
           tar -xzf ${{ env.sdist_name }} -C /tmp
           sdist_dir="/tmp/${{ env.package-name }}-$(echo ${{ env.sdist_name }} | sed 's/.*-\([0-9.]*\)\.tar\.gz/\1/')"
-          # Install the sdist so its runtime dependencies (numpy, scikit-learn,
-          # scipy, joblib) and Cython-built extensions are available to pytest.
+          # Install the sdist. This builds the Cython extensions (Cython is a
+          # build-system requirement, installed in an isolated build env) and
+          # installs the package with its compiled .so files into site-packages.
           python -m pip install "$sdist_dir"
-          ${{ env.test-cmd }} "$sdist_dir/tests"
+          # Run pytest from /tmp so `grakelx` resolves from site-packages.
+          # The runner CWD is the source checkout (`/home/runner/work/...`),
+          # whose `grakelx/` directory has no compiled .so files and would
+          # shadow the installed package, failing with:
+          #   cannot import name 'k_to_ij_rectangular' from
+          #   'grakelx.kernels._c_functions' (unknown location)
+          # /tmp has no `grakelx/` subdir, so the installed package wins.
+          (cd /tmp && ${{ env.test-cmd }} "$sdist_dir/tests")
 
       - name: Verify installed package
         run: |
-          python -c "import grakelx; print(f'grakelx {grakelx.__version__} installed successfully')"
+          cd /tmp && python -c "import grakelx; print(f'grakelx {grakelx.__version__} installed successfully')"
 
       - name: Store artifacts
         uses: actions/upload-artifact@v4

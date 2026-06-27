@@ -7,7 +7,14 @@ recursive-include grakelx/kernels/_c_functions/include *
 recursive-include grakelx/kernels/_c_functions/src *
 
 recursive-include grakelx/kernels/_isomorphism/bliss-0.50 *
-recursive-include grakelx/kernels/_isomorphism *
+include grakelx/kernels/_isomorphism/__init__.py
+include grakelx/kernels/_isomorphism/bliss.pyx
+include grakelx/kernels/_isomorphism/intpyblissmodule_2.cc
+include grakelx/kernels/_isomorphism/intpyblissmodule_3.cc
+include grakelx/kernels/_isomorphism/bliss.cpp
+prune grakelx/kernels/_isomorphism/__pycache__
+global-exclude *.so
+global-exclude __pycache__
 
 recursive-include tests/data/Cuneiform *
 recursive-include tests/data/MUTAG *
