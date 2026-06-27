@@ -9,7 +9,7 @@
 > originally published in JMLR 2020. This fork continues maintenance and development under the **BSD 3-clause** license.
 > See [LICENSE](LICENSE) and the [Acknowledgements](#acknowledgements) section below.
 
-[![Pypi Versions](https://img.shields.io/pypi/pyversions/grakel.svg)](https://pypi.org/pypi/grakel/)
+[![Pypi Versions](https://img.shields.io/pypi/pyversions/grakel.svg)](https://pypi.org/pypi/grakelx/)
 
 **[Upstream Documentation](https://ysig.github.io/GraKeL/)** | **[Paper](http://jmlr.org/papers/volume21/18-370/18-370.pdf)**
 
