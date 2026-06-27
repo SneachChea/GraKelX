@@ -124,9 +124,20 @@ jobs:
           tar -xzf ${{ env.sdist_name }} -C /tmp
           sdist_dir="/tmp/${{ env.package-name }}-$(echo ${{ env.sdist_name }} | sed 's/.*-\([0-9.]*\)\.tar\.gz/\1/')"
           # Install the sdist so its runtime dependencies (numpy, scikit-learn,
-          # scipy, joblib) and Cython-built extensions are available to pytest.
+          # scipy, joblib) and Cython (a build-system requirement) are available.
           python -m pip install "$sdist_dir"
-          ${{ env.test-cmd }} "$sdist_dir/tests"
+          # Build the Cython extensions in-place inside the sdist. The sdist
+          # only ships .pyx/.cc sources, not the compiled .so files. pytest
+          # resolves `grakelx` from the current working directory's sys.path,
+          # so without these .so files in the sdist source tree the import
+          # chain (grakelx -> grakelx.kernels.kernel ->
+          # grakelx.kernels._c_functions) fails with
+          # `cannot import name 'k_to_ij_rectangular' from
+          # 'grakelx.kernels._c_functions' (unknown location)`.
+          (cd "$sdist_dir" && python setup.py build_ext --inplace)
+          # Run tests from inside the sdist so the freshly-built extensions
+          # are picked up.
+          (cd "$sdist_dir" && ${{ env.test-cmd }} tests)
 
       - name: Verify installed package
         run: |

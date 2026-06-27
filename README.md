@@ -10,8 +10,6 @@
 > See [LICENSE](LICENSE) and the [Acknowledgements](#acknowledgements) section below.
 
 [![Pypi Versions](https://img.shields.io/pypi/pyversions/grakel.svg)](https://pypi.org/pypi/grakel/)
-[![Coverage Status](https://codecov.io/gh/ysig/GraKeL/branch/master/graph/badge.svg)](https://codecov.io/gh/ysig/GraKeL)
-[![CircleCI Status](https://circleci.com/gh/ysig/GraKeL.svg?style=svg)](https://circleci.com/gh/ysig/GraKeL)
 
 **[Upstream Documentation](https://ysig.github.io/GraKeL/)** | **[Paper](http://jmlr.org/papers/volume21/18-370/18-370.pdf)**
 
