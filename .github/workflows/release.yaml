@@ -28,7 +28,7 @@ on:
   # Bushj
   push:
     branches:
-      - master
+      - main
       # Release branches
       - "[0-9]+.[0-9]+.X"
 
