@@ -1,7 +1,8 @@
 # Workflow to build and test wheels
 # =================================
-# This github action gets triggered whenever there is a push to the master branch or a release is created.
-# It generates both wheels and distributions files, making sure their contents are correct via unit-testing.
+# This github action gets triggered whenever a git tag (matching v*) is pushed,
+# or manually via workflow_dispatch. It generates both wheels and distributions
+# files, making sure their contents are correct via unit-testing.
 #
 # Please note that creating a git tag and pushing it (git tag <>; git push --tags) is not
 # sufficient to append the wheels and distribution files to your release.
@@ -25,12 +26,10 @@ on:
         required: false
         type: boolean
 
-  # Push
+  # Tag push (e.g. v0.1.12, v1.0.0)
   push:
-    branches:
-      - main
-      # Release branches
-      - "[0-9]+.[0-9]+.X"
+    tags:
+      - "v*"
 
 env:
   package-name: grakelx
