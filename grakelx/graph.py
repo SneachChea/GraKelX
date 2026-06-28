@@ -1449,7 +1449,10 @@ class Graph(object):
         output += [",".join(map(str, self.get_vertices("any")))]
 
         output += ["#edges"]
-        output += ["\n".join(map(lambda x: str(x[0]) + "," + str(x[1]), self.get_edges("any")))]
+        # `get_edges` does not accept "any"; resolve it the same way
+        # `get_vertices("any")` does so __repr__ works for any internal format.
+        edge_purpose = "adjacency" if self._format in ("all", "adjacency") else "dictionary"
+        output += ["\n".join(map(lambda x: str(x[0]) + "," + str(x[1]), self.get_edges(edge_purpose)))]
 
         def list_repr(x):
             # convert numpy to list
