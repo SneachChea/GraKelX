@@ -384,7 +384,7 @@ class Kernel(BaseEstimator, TransformerMixin):
                     self._initialized[key] = False
 
         # Set parameters
-        super(Kernel, self).set_params(**params)
+        super().set_params(**params)
 
 
 def indexes(n_jobs, nsamples):

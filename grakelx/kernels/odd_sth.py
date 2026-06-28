@@ -5,12 +5,9 @@
 import copy
 import warnings
 from collections import defaultdict
+from collections.abc import Iterable
 
 import numpy as np
-
-# Python 2/3 cross-compatibility import
-from six import iteritems
-from six.moves.collections_abc import Iterable
 from sklearn.exceptions import NotFittedError
 from sklearn.utils.validation import check_is_fitted
 
@@ -53,7 +50,7 @@ class OddSth(Kernel):
 
     def __init__(self, n_jobs=None, normalize=False, verbose=False, h=None):
         """Initialise an `odd_sth` kernel."""
-        super(OddSth, self).__init__(n_jobs=n_jobs, normalize=normalize, verbose=verbose)
+        super().__init__(n_jobs=n_jobs, normalize=normalize, verbose=verbose)
         self.h = h
         self._initialized.update({"h": False})
 
@@ -158,7 +155,7 @@ class OddSth(Kernel):
 
         C = np.empty(shape=(len(ref), 1))
         phi = np.empty(shape=(len(ref), self._nx))
-        for i, v in iteritems(ref):
+        for i, v in ref.items():
             # number of identical subtrees
             # equal the D element
             C[i] = self.X[0][v][0]
@@ -420,7 +417,7 @@ def odd(vertices, edges, labels):
     else:
         raise TypeError("unsupported vertices type")
 
-    for k, e in iteritems(edges):
+    for k, e in edges.items():
         for v in e:
             if v not in indegrees:
                 indegrees[v] = 1

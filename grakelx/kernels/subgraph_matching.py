@@ -3,12 +3,10 @@
 # Author: Ioannis Siglidis <y.siglidis@gmail.com>
 # License: BSD 3 clause
 import warnings
+from collections.abc import Iterable
 from numbers import Real
 
 import numpy as np
-
-# For python2/3 compatibility
-from six.moves.collections_abc import Iterable
 
 from grakelx.graph import Graph
 from grakelx.kernels._c_functions import sm_kernel
@@ -57,7 +55,7 @@ class SubgraphMatching(Kernel):
 
     def __init__(self, n_jobs=None, verbose=False, normalize=False, k=5, kv=_dirac, ke=_dirac, lw="uniform"):
         """Initialise a `subgraph_matching` kernel."""
-        super(SubgraphMatching, self).__init__(n_jobs=n_jobs, verbose=verbose, normalize=normalize)
+        super().__init__(n_jobs=n_jobs, verbose=verbose, normalize=normalize)
 
         self.k = k
         self.kv = kv
@@ -67,7 +65,7 @@ class SubgraphMatching(Kernel):
 
     def initialize(self):
         """Initialize all transformer arguments, needing initialization."""
-        super(SubgraphMatching, self).initialize()
+        super().initialize()
         if not self._initialized["k"]:
             if type(self.k) is not int and self.k < 1:
                 raise TypeError("k must be an integer greater-equal than 1")

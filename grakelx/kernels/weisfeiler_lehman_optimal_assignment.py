@@ -3,13 +3,10 @@
 # Author: Giannis Nikolentzos <nikolentzos@lix.polytechnique.fr>
 # License: BSD 3 clause
 import warnings
+from collections.abc import Iterable
 
 import numpy as np
 from scipy.sparse import lil_matrix
-
-# Python 2/3 cross-compatibility import
-from six import iteritems, itervalues
-from six.moves.collections_abc import Iterable
 from sklearn.exceptions import NotFittedError
 from sklearn.utils.validation import check_is_fitted
 
@@ -54,7 +51,7 @@ class WeisfeilerLehmanOptimalAssignment(Kernel):
 
     def __init__(self, n_jobs=None, verbose=False, normalize=False, n_iter=5, sparse=False):
         """Initialise a `weisfeiler_lehman` kernel."""
-        super(WeisfeilerLehmanOptimalAssignment, self).__init__(n_jobs=n_jobs, verbose=verbose, normalize=normalize)
+        super().__init__(n_jobs=n_jobs, verbose=verbose, normalize=normalize)
 
         self.n_iter = n_iter
         self.sparse = sparse
@@ -62,7 +59,7 @@ class WeisfeilerLehmanOptimalAssignment(Kernel):
 
     def initialize(self):
         """Initialize all transformer arguments, needing initialization."""
-        super(WeisfeilerLehmanOptimalAssignment, self).initialize()
+        super().initialize()
 
         if not self._initialized["n_iter"]:
             if type(self.n_iter) is not int or self.n_iter <= 0:
@@ -135,7 +132,7 @@ class WeisfeilerLehmanOptimalAssignment(Kernel):
                     )
                 Gs_ed[nx] = x.get_edge_dictionary()
                 L[nx] = x.get_labels(purpose="dictionary")
-                distinct_values |= set(itervalues(L[nx]))
+                distinct_values |= set(L[nx].values())
                 nx += 1
             if nx == 0:
                 raise ValueError("parsed input is empty")
@@ -334,7 +331,7 @@ class WeisfeilerLehmanOptimalAssignment(Kernel):
                     L[nx] = x.get_labels(purpose="dictionary")
 
                     # Hold all the distinct values
-                    distinct_values |= set(v for v in itervalues(L[nx]) if v not in self._inv_labels[0])
+                    distinct_values |= {v for v in L[nx].values() if v not in self._inv_labels[0]}
                     nx += 1
                 if nx == 0:
                     raise ValueError("parsed input is empty")
@@ -351,7 +348,7 @@ class WeisfeilerLehmanOptimalAssignment(Kernel):
 
         for j in range(nx):
             new_labels = dict()
-            for k, v in iteritems(L[j]):
+            for k, v in L[j].items():
                 if v in self._inv_labels[0]:
                     new_labels[k] = self._inv_labels[0][v]
                 else:
@@ -381,7 +378,7 @@ class WeisfeilerLehmanOptimalAssignment(Kernel):
             # Recalculate labels
             for j in range(nx):
                 new_labels = dict()
-                for k, v in iteritems(L_temp[j]):
+                for k, v in L_temp[j].items():
                     if v in self._inv_labels[i]:
                         new_labels[k] = self._inv_labels[i][v]
                     else:

@@ -1,18 +1,13 @@
 """A file having general functions and classes usefull insid `grakel`."""
 
-from __future__ import generators
-
 import operator
 from collections.abc import Hashable
 
 import numpy as np
-
-# Python 2/3 cross-compatibility import
-from future.utils import iteritems
 from scipy.special import binom as binomial
 
 
-class priority_dict(dict, object):
+class priority_dict(dict):
     """A priority dictionary.
 
     This implementation of priority dictionaries using binary heaps
@@ -66,7 +61,7 @@ class priority_dict(dict, object):
         dict.__setitem__(self, key, val)
         heap = self.__heap
         if len(heap) > 2 * len(self):
-            self.__heap = [(v, k) for k, v in iteritems(self)]
+            self.__heap = [(v, k) for k, v in self.items()]
             self.__heap.sort()  # builtin sort likely faster than O(n) heapify
         else:
             newPair = (val, key)

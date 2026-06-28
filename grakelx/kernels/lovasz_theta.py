@@ -4,15 +4,13 @@
 # License: BSD 3 clause
 import sys
 import warnings
+from collections.abc import Iterable
 from math import sqrt
 
 import numpy as np
 from numpy import pad
 from numpy.linalg import LinAlgError, norm
 from scipy.linalg import cholesky, eigvalsh, solve
-
-# For python2/3 compatibility
-from six.moves.collections_abc import Iterable
 from sklearn.utils import check_random_state
 
 from grakelx.graph import Graph
@@ -95,7 +93,7 @@ class LovaszTheta(Kernel):
                 " Please consider using another Kernel if this affects you."
             )
 
-        super(LovaszTheta, self).__init__(n_jobs=n_jobs, normalize=normalize, verbose=verbose)
+        super().__init__(n_jobs=n_jobs, normalize=normalize, verbose=verbose)
 
         self.n_samples = n_samples
         self.subsets_size_range = subsets_size_range
@@ -114,7 +112,7 @@ class LovaszTheta(Kernel):
 
     def initialize(self):
         """Initialize all transformer arguments, needing initialization."""
-        super(LovaszTheta, self).initialize()
+        super().initialize()
 
         if not self._initialized["n_samples"]:
             if self.n_samples <= 0 or type(self.n_samples) is not int:
@@ -365,7 +363,7 @@ def _calculate_lovasz_labelling_(X, t, d):
     except LinAlgError:
         x = X.diagonal()
         x.setflags(write=True)
-        x += 2 * abs(eigvalsh(X, lower=False, eigvals=(0, 0))[0])
+        x += 2 * abs(eigvalsh(X, lower=False, subset_by_index=(0, 0))[0])
         V = cholesky(X)
 
     V = pad(V, [(0, d - n), (0, 0)], mode="constant", constant_values=0)

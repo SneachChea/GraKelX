@@ -4,9 +4,6 @@ import copy
 import warnings
 
 import numpy as np
-
-# Python 2/3 cross-compatibility import
-from future.utils import iteritems
 from scipy.linalg import svd
 from sklearn.base import BaseEstimator, TransformerMixin
 from sklearn.utils import check_random_state
@@ -489,7 +486,7 @@ class GraphKernel(BaseEstimator, TransformerMixin):
                 raise ValueError("each dictionary concerning a kernel must " 'have a "name" parameter designating the ' "kernel")
             kernel_name = kernel.pop("name")
 
-        for keys, val in iteritems(hidden_args):
+        for keys, val in hidden_args.items():
             if keys in kernel:
                 warnings.warn(
                     "Overriding global kernel attribute "
@@ -572,7 +569,7 @@ class GraphKernel(BaseEstimator, TransformerMixin):
         params = copy.deepcopy(params)
 
         # Iterate over the parameters
-        for key, value in iteritems(params):
+        for key, value in params.items():
             key, delim, sub_key = key.partition("__")
             if delim:
                 if sub_key in self._initialized:
@@ -581,4 +578,4 @@ class GraphKernel(BaseEstimator, TransformerMixin):
                 self._initialized[key] = False
 
         # Set parameters
-        super(GraphKernel, self).set_params(**params)
+        super().set_params(**params)

@@ -3,12 +3,10 @@
 # Author: Ioannis Siglidis <y.siglidis@gmail.com>
 # License: BSD 3 clause
 import warnings
+from collections.abc import Iterable
 
 import numpy as np
 from scipy.linalg import eigvalsh
-
-# For python2/3 compatibility
-from six.moves.collections_abc import Iterable
 from sklearn.svm import OneClassSVM
 from sklearn.utils import check_random_state
 
@@ -67,7 +65,7 @@ class SvmTheta(Kernel):
     ):
         """Initialise a lovasz_theta kernel."""
         # setup valid parameters and initialise from parent
-        super(SvmTheta, self).__init__(n_jobs=n_jobs, normalize=normalize, verbose=verbose)
+        super().__init__(n_jobs=n_jobs, normalize=normalize, verbose=verbose)
 
         self.n_samples = n_samples
         self.subsets_size_range = subsets_size_range
@@ -84,7 +82,7 @@ class SvmTheta(Kernel):
 
     def initialize(self):
         """Initialize all transformer arguments, needing initialization."""
-        super(SvmTheta, self).initialize()
+        super().initialize()
         if not self._initialized["n_samples"]:
             if self.n_samples <= 0 or type(self.n_samples) is not int:
                 raise TypeError("n_samples must an integer be bigger than zero")

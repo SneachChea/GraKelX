@@ -2,19 +2,14 @@
 
 # Author: Ioannis Siglidis <y.siglidis@gmail.com>
 # License: BSD 3 clause
-# Python 2/3 cross-compatibility import
-from __future__ import print_function
-
 import warnings
+from collections.abc import Iterable
 from math import exp
 from numbers import Real
 
 import numpy as np
 from numpy.linalg import eig, eigvals, inv, multi_dot
 from scipy.sparse.csgraph import laplacian
-
-# For python2/3 compatibility
-from six.moves.collections_abc import Iterable
 from sklearn.utils import check_random_state
 
 from grakelx.graph import Graph
@@ -72,7 +67,7 @@ class MultiscaleLaplacian(Kernel):
         n_samples=50,
     ):
         """Initialise a `multiscale_laplacian` kernel."""
-        super(MultiscaleLaplacian, self).__init__(n_jobs=n_jobs, normalize=normalize, verbose=verbose)
+        super().__init__(n_jobs=n_jobs, normalize=normalize, verbose=verbose)
 
         self.random_state = random_state
         self.gamma = gamma
@@ -93,7 +88,7 @@ class MultiscaleLaplacian(Kernel):
 
     def initialize(self):
         """Initialize all transformer arguments, needing initialization."""
-        super(MultiscaleLaplacian, self).initialize()
+        super().initialize()
 
         if not self._initialized["random_state"]:
             self.random_state_ = check_random_state(self.random_state)

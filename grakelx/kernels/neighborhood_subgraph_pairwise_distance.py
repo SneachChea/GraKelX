@@ -3,16 +3,12 @@
 # Author: Ioannis Siglidis <y.siglidis@gmail.com>
 # License: BSD 3 clause
 import warnings
-from builtins import range
 from collections import defaultdict
+from collections.abc import Iterable
+from itertools import filterfalse
 
 import numpy as np
 from scipy.sparse import csr_matrix
-
-# Python 2/3 cross-compatibility import
-from six import iteritems
-from six.moves import filterfalse
-from six.moves.collections_abc import Iterable
 from sklearn.exceptions import NotFittedError
 from sklearn.utils.validation import check_is_fitted
 
@@ -60,7 +56,7 @@ class NeighborhoodSubgraphPairwiseDistance(Kernel):
     def __init__(self, n_jobs=None, normalize=False, verbose=False, r=3, d=4):
         """Initialize an NSPD kernel."""
         # setup valid parameters and initialise from parent
-        super(NeighborhoodSubgraphPairwiseDistance, self).__init__(n_jobs=n_jobs, normalize=normalize, verbose=verbose)
+        super().__init__(n_jobs=n_jobs, normalize=normalize, verbose=verbose)
 
         self.r = r
         self.d = d
@@ -202,8 +198,8 @@ class NeighborhoodSubgraphPairwiseDistance(Kernel):
                 # A feature matrix for all levels
                 M = dict()
 
-                for key, d in filterfalse(lambda a: len(a[1]) == 0, iteritems(data)):
-                    indexes, data = zip(*iteritems(d))
+                for key, d in filterfalse(lambda a: len(a[1]) == 0, data.items()):
+                    indexes, data = zip(*d.items())
                     rows, cols = zip(*indexes)
                     M[key] = csr_matrix((data, (rows, cols)), shape=(ng, len(all_keys[key])), dtype=np.int64)
                 self._fit_keys = all_keys
@@ -213,8 +209,8 @@ class NeighborhoodSubgraphPairwiseDistance(Kernel):
                 # A feature matrix for all levels
                 M = dict()
 
-                for key, d in filterfalse(lambda a: len(a[1]) == 0, iteritems(data)):
-                    indexes, data = zip(*iteritems(d))
+                for key, d in filterfalse(lambda a: len(a[1]) == 0, data.items()):
+                    indexes, data = zip(*d.items())
                     rows, cols = zip(*indexes)
                     M[key] = csr_matrix(
                         (data, (rows, cols)),
@@ -261,11 +257,11 @@ class NeighborhoodSubgraphPairwiseDistance(Kernel):
         try:
             check_is_fitted(self, ["_X_level_norm_factor"])
         except NotFittedError:
-            self._X_level_norm_factor = {key: np.array(M.power(2).sum(-1)) for (key, M) in iteritems(self.X)}
+            self._X_level_norm_factor = {key: np.array(M.power(2).sum(-1)) for (key, M) in self.X.items()}
 
         N = self._X_level_norm_factor
         S = np.zeros(shape=(self._ngy, self._ngx))
-        for key, Mp in filterfalse(lambda x: x[0] not in self.X, iteritems(Y)):
+        for key, Mp in filterfalse(lambda x: x[0] not in self.X, Y.items()):
             M = self.X[key]
             K = M.dot(Mp.T[: M.shape[1]]).toarray().T
             S += np.nan_to_num(K / np.sqrt(np.outer(np.array(Mp.power(2).sum(-1)), N[key])))
@@ -300,7 +296,7 @@ class NeighborhoodSubgraphPairwiseDistance(Kernel):
         self.fit(X)
 
         S, N = np.zeros(shape=(self._ngx, self._ngx)), dict()
-        for key, M in iteritems(self.X):
+        for key, M in self.X.items():
             K = M.dot(M.T).toarray()
             K_diag = K.diagonal()
             N[key] = K_diag

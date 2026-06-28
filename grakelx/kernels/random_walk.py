@@ -3,6 +3,7 @@
 # Author: Ioannis Siglidis <y.siglidis@gmail.com>
 # License: BSD 3 clause
 import warnings
+from collections.abc import Iterable
 from itertools import product
 
 import numpy as np
@@ -11,13 +12,10 @@ if np.__version__ < "2.0.0":
     from numpy import ComplexWarning
 else:
     from numpy.exceptions import ComplexWarning
-# Python 2/3 cross-compatibility import
-from builtins import range
 
 from numpy.linalg import eig, inv, multi_dot
 from scipy.linalg import expm
 from scipy.sparse.linalg import LinearOperator, cg
-from six.moves.collections_abc import Iterable
 
 from grakelx.graph import Graph
 from grakelx.kernels.kernel import Kernel
@@ -68,7 +66,7 @@ class RandomWalk(Kernel):
     ):
         """Initialise a random_walk kernel."""
         # setup valid parameters and initialise from parent
-        super(RandomWalk, self).__init__(n_jobs=n_jobs, normalize=normalize, verbose=verbose)
+        super().__init__(n_jobs=n_jobs, normalize=normalize, verbose=verbose)
 
         # Ignores ComplexWarning as it does not signify anything problematic
         warnings.filterwarnings("ignore", category=ComplexWarning)
@@ -82,7 +80,7 @@ class RandomWalk(Kernel):
 
     def initialize(self):
         """Initialize all transformer arguments, needing initialization."""
-        super(RandomWalk, self).initialize()
+        super().initialize()
 
         if not self._initialized["method_type"]:
             # Setup method type and define operation.
@@ -335,7 +333,7 @@ class RandomWalkLabeled(RandomWalk):
     ):
         """Initialise a labeled random_walk kernel."""
         # Initialise from parent
-        super(RandomWalkLabeled, self).__init__(
+        super().__init__(
             n_jobs=n_jobs,
             normalize=normalize,
             verbose=verbose,
