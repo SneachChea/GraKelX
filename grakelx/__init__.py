@@ -35,6 +35,7 @@ from grakelx.utils import (
     graph_from_networkx,
     graph_from_pandas,
     graph_from_torch_geometric,
+    networkx_from_graph,
 )
 
 __all__ = [
@@ -65,6 +66,7 @@ __all__ = [
     "CoreFramework",
     "WeisfeilerLehmanOptimalAssignment",
     "graph_from_networkx",
+    "networkx_from_graph",
     "graph_from_pandas",
     "graph_from_csv",
     "graph_from_torch_geometric",

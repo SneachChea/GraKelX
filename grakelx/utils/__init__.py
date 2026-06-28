@@ -18,7 +18,7 @@ from grakelx import Graph
 from grakelx.graph import is_adjacency as valid_matrix
 
 from ._misc import EPS
-from .converts import graph_from_networkx
+from .converts import graph_from_networkx, networkx_from_graph
 
 
 class KMTransformer(BaseEstimator, TransformerMixin):
@@ -721,6 +721,7 @@ __all__ = [
     "KMTransformer",
     "cross_validate_Kfold_SVM",
     "graph_from_networkx",
+    "networkx_from_graph",
     "graph_from_pandas",
     "graph_from_csv",
     "graph_from_torch_geometric",

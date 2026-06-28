@@ -27,8 +27,20 @@ from grakelx.graph import Graph
 global datasets_metadata, symmetric_dataset
 
 dataset_metadata = {
-    "AIDS": {"nl": True, "el": True, "na": True, "ea": False, "link": "https://www.chrsmrrs.com/graphkerneldatasets/AIDS.zip"},
-    "BZR": {"nl": True, "el": False, "na": True, "ea": False, "link": "https://www.chrsmrrs.com/graphkerneldatasets/BZR.zip"},
+    "AIDS": {
+        "nl": True,
+        "el": True,
+        "na": True,
+        "ea": False,
+        "link": "https://www.chrsmrrs.com/graphkerneldatasets/AIDS.zip",
+    },
+    "BZR": {
+        "nl": True,
+        "el": False,
+        "na": True,
+        "ea": False,
+        "link": "https://www.chrsmrrs.com/graphkerneldatasets/BZR.zip",
+    },
     "BZR_MD": {
         "nl": True,
         "el": True,
@@ -57,7 +69,13 @@ dataset_metadata = {
         "ea": False,
         "link": "https://www.chrsmrrs.com/graphkerneldatasets/COLLAB.zip",
     },
-    "COX2": {"nl": True, "el": False, "na": True, "ea": False, "link": "https://www.chrsmrrs.com/graphkerneldatasets/COX2.zip"},
+    "COX2": {
+        "nl": True,
+        "el": False,
+        "na": True,
+        "ea": False,
+        "link": "https://www.chrsmrrs.com/graphkerneldatasets/COX2.zip",
+    },
     "COX2_MD": {
         "nl": True,
         "el": True,
@@ -65,7 +83,13 @@ dataset_metadata = {
         "ea": True,
         "link": "https://www.chrsmrrs.com/graphkerneldatasets/COX2_MD.zip",
     },
-    "DHFR": {"nl": True, "el": False, "na": True, "ea": False, "link": "https://www.chrsmrrs.com/graphkerneldatasets/DHFR.zip"},
+    "DHFR": {
+        "nl": True,
+        "el": False,
+        "na": True,
+        "ea": False,
+        "link": "https://www.chrsmrrs.com/graphkerneldatasets/DHFR.zip",
+    },
     "DHFR_MD": {
         "nl": True,
         "el": True,
@@ -73,8 +97,20 @@ dataset_metadata = {
         "ea": True,
         "link": "https://www.chrsmrrs.com/graphkerneldatasets/DHFR_MD.zip",
     },
-    "ER_MD": {"nl": True, "el": True, "na": False, "ea": True, "link": "https://www.chrsmrrs.com/graphkerneldatasets/ER_MD.zip"},
-    "DD": {"nl": True, "el": False, "na": False, "ea": False, "link": "https://www.chrsmrrs.com/graphkerneldatasets/DD.zip"},
+    "ER_MD": {
+        "nl": True,
+        "el": True,
+        "na": False,
+        "ea": True,
+        "link": "https://www.chrsmrrs.com/graphkerneldatasets/ER_MD.zip",
+    },
+    "DD": {
+        "nl": True,
+        "el": False,
+        "na": False,
+        "ea": False,
+        "link": "https://www.chrsmrrs.com/graphkerneldatasets/DD.zip",
+    },
     "ENZYMES": {
         "nl": True,
         "el": False,
@@ -101,7 +137,7 @@ dataset_metadata = {
         "el": False,
         "na": True,
         "ea": True,
-        "link": "https://www.chrsmrrs.com/graphkerneldatasets/graphkerneldatasets/FIRSTMM_DB.zip",
+        "link": "https://www.chrsmrrs.com/graphkerneldatasets/FIRSTMM_DB.zip",
     },
     "FRANKENSTEIN": {
         "nl": False,
@@ -122,7 +158,7 @@ dataset_metadata = {
         "el": False,
         "na": False,
         "ea": False,
-        "link": "https://www.chrsmrrs.com/graphkerneldatasets/graphkerneldatasets/IMDB-MULTI.zip",
+        "link": "https://www.chrsmrrs.com/graphkerneldatasets/IMDB-MULTI.zip",
     },
     "Letter-high": {
         "nl": False,
@@ -173,8 +209,20 @@ dataset_metadata = {
         "ea": False,
         "link": "https://www.chrsmrrs.com/graphkerneldatasets/MSRC_21C.zip",
     },
-    "MUTAG": {"nl": True, "el": True, "na": False, "ea": False, "link": "https://www.chrsmrrs.com/graphkerneldatasets/MUTAG.zip"},
-    "NCI1": {"nl": True, "el": False, "na": False, "ea": False, "link": "https://www.chrsmrrs.com/graphkerneldatasets/NCI1.zip"},
+    "MUTAG": {
+        "nl": True,
+        "el": True,
+        "na": False,
+        "ea": False,
+        "link": "https://www.chrsmrrs.com/graphkerneldatasets/MUTAG.zip",
+    },
+    "NCI1": {
+        "nl": True,
+        "el": False,
+        "na": False,
+        "ea": False,
+        "link": "https://www.chrsmrrs.com/graphkerneldatasets/NCI1.zip",
+    },
     "NCI109": {
         "nl": True,
         "el": False,
@@ -320,7 +368,7 @@ dataset_metadata = {
         "el": True,
         "na": False,
         "ea": False,
-        "link": "https://www.chrsmrrs.com/graphkerneldatasets/Tox21_ER_LBD.zipp",
+        "link": "https://www.chrsmrrs.com/graphkerneldatasets/Tox21_ER_LBD.zip",
     },
     "Tox21_HSE": {
         "nl": True,
@@ -348,7 +396,7 @@ dataset_metadata = {
         "el": True,
         "na": False,
         "ea": False,
-        "link": "https://www.chrsmrrs.com/graphkerneldatasets/ox21_PPAR-gamma.zip",
+        "link": "https://www.chrsmrrs.com/graphkerneldatasets/Tox21_PPAR-gamma.zip",
     },
 }
 
@@ -452,9 +500,16 @@ def read_data(
     elif dataset_metadata[name].get("nl", os.path.exists(node_labels_path)):
         with open(node_labels_path, "r") as f:
             for i, line in enumerate(f, 1):
-                node_labels[ngc[i]][i] = int(line[:-1])
+                parts = line[:-1].replace(" ", "").split(",")
+                # Some datasets (e.g. Cuneiform) ship multi-value node labels
+                # like "0, 0". Parse as a list of ints in that case, else
+                # keep the historical scalar int representation.
+                if len(parts) == 1:
+                    node_labels[ngc[i]][i] = int(parts[0])
+                else:
+                    node_labels[ngc[i]][i] = [int(p) for p in parts]
     elif produce_labels_nodes:
-        for i in range(1, len(Graphs) + 1):
+        for i in Graphs:
             node_labels[i] = dict(Counter(s for (s, d) in Graphs[i] if s != d))
 
     # Extract edge attributes
@@ -470,16 +525,25 @@ def read_data(
     elif dataset_metadata[name].get("el", os.path.exists(edge_labels_path)):
         with open(edge_labels_path, "r") as f:
             for i, line in enumerate(f, 1):
-                edge_labels[ngc[elc[i][0]]][elc[i]] = int(line[:-1])
+                parts = line[:-1].replace(" ", "").split(",")
+                if len(parts) == 1:
+                    edge_labels[ngc[elc[i][0]]][elc[i]] = int(parts[0])
+                else:
+                    edge_labels[ngc[elc[i][0]]][elc[i]] = [int(p) for p in parts]
                 if is_symmetric:
-                    edge_labels[ngc[elc[i][1]]][(elc[i][1], elc[i][0])] = int(line[:-1])
+                    edge_labels[ngc[elc[i][1]]][(elc[i][1], elc[i][0])] = edge_labels[ngc[elc[i][0]]][elc[i]]
 
     Gs = list()
-    if as_graphs:
-        for i in range(1, len(Graphs) + 1):
+    # `Graphs` keys are the declared graph_ids, which are not always
+    # contiguous (e.g. FINGERPRINT has a graph with no edges, so its id
+    # is skipped during edge parsing but the graph still appears in the
+    # graph_indicator file). Iterate over the actual keys, in the order
+    # declared by graph_indicator, instead of assuming 1..len(Graphs).
+    graph_ids_in_order = sorted(set(ngc.values()), key=lambda g: min(k for k, v in ngc.items() if v == g))
+    for i in graph_ids_in_order:
+        if as_graphs:
             Gs.append(Graph(Graphs[i], node_labels[i], edge_labels[i]))
-    else:
-        for i in range(1, len(Graphs) + 1):
+        else:
             Gs.append([Graphs[i], node_labels[i], edge_labels[i]])
 
     if with_classes:
