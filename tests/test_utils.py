@@ -20,6 +20,7 @@ from grakelx import (
     graph_from_networkx,
     graph_from_pandas,
     graph_from_torch_geometric,
+    networkx_from_graph,
 )
 from grakelx.datasets import fetch_dataset
 from grakelx.datasets.base import read_data
@@ -32,7 +33,11 @@ if __name__ == "__main__":
 
     parser = argparse.ArgumentParser(description="A test file for all `Graph` type objects")
     parser.add_argument("--verbose", help="verbose outputs on stdout", action="store_true")
-    parser.add_argument("--ignore_warnings", help="ignore warnings produced by kernel executions", action="store_true")
+    parser.add_argument(
+        "--ignore_warnings",
+        help="ignore warnings produced by kernel executions",
+        action="store_true",
+    )
 
     args = parser.parse_args()
     verbose = bool(args.verbose)
@@ -57,7 +62,12 @@ def test_pandas():
     except ImportError:
         return
 
-    ga = {0: {0: 1.0, 1: 1.0, 3: 3.0}, 1: {0: 1.0, 3: 2.0}, 2: {0: 2.0, 1: 3.0, 3: 1.0}, 3: {0: 1.0}}
+    ga = {
+        0: {0: 1.0, 1: 1.0, 3: 3.0},
+        1: {0: 1.0, 3: 2.0},
+        2: {0: 2.0, 1: 3.0, 3: 1.0},
+        3: {0: 1.0},
+    }
 
     ganl = {0: "l1", 1: "l2", 2: "l3", 3: "l4"}
 
@@ -73,7 +83,12 @@ def test_pandas():
         (3, 0): "el9",
     }
 
-    gb = {4: {4: 1.0, 5: 1.0, 7: 3.0}, 5: {4: 1.0, 7: 2.0}, 6: {4: 2.0, 5: 3.0, 7: 1.0}, 7: {4: 1.0}}
+    gb = {
+        4: {4: 1.0, 5: 1.0, 7: 3.0},
+        5: {4: 1.0, 7: 2.0},
+        6: {4: 2.0, 5: 3.0, 7: 1.0},
+        7: {4: 1.0},
+    }
 
     gbnl = {4: "l1", 5: "l2", 6: "l3", 7: "l4"}
 
@@ -95,7 +110,26 @@ def test_pandas():
         {
             "src": [0, 0, 0, 1, 1, 2, 2, 2, 3, 4, 4, 4, 5, 5, 6, 6, 6, 7],
             "dst": [0, 1, 3, 0, 3, 0, 1, 3, 0, 4, 5, 7, 4, 7, 4, 5, 7, 4],
-            "w": [1.0, 1.0, 3.0, 1.0, 2.0, 2.0, 3.0, 1.0, 1.0, 1.0, 1.0, 3.0, 1.0, 2.0, 2.0, 3.0, 1.0, 1.0],
+            "w": [
+                1.0,
+                1.0,
+                3.0,
+                1.0,
+                2.0,
+                2.0,
+                3.0,
+                1.0,
+                1.0,
+                1.0,
+                1.0,
+                3.0,
+                1.0,
+                2.0,
+                2.0,
+                3.0,
+                1.0,
+                1.0,
+            ],
             "g": [0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 1, 1, 1, 1, 1, 1, 1],
             "l": [
                 "el1",
@@ -132,7 +166,12 @@ def test_networkx():
     except ImportError:
         return
 
-    ga = {0: {0: 1.0, 1: 1.0, 3: 3.0}, 1: {0: 1.0, 3: 2.0}, 2: {0: 2.0, 1: 3.0, 3: 1.0}, 3: {0: 1.0}}
+    ga = {
+        0: {0: 1.0, 1: 1.0, 3: 3.0},
+        1: {0: 1.0, 3: 2.0},
+        2: {0: 2.0, 1: 3.0, 3: 1.0},
+        3: {0: 1.0},
+    }
 
     ganl = {0: "l1", 1: "l2", 2: "l3", 3: "l4"}
 
@@ -229,12 +268,20 @@ def test_networkx_node_attributed():
     g1 = nx.Graph()
     g1.add_nodes_from([0, 1, 2])
     g1.add_edges_from([(0, 1), (1, 2)])
-    nx.set_node_attributes(g1, {0: np.array([1.1, 0.8]), 1: np.array([0.2, -0.3]), 2: np.array([0.9, 1.0])}, "attributes")
+    nx.set_node_attributes(
+        g1,
+        {0: np.array([1.1, 0.8]), 1: np.array([0.2, -0.3]), 2: np.array([0.9, 1.0])},
+        "attributes",
+    )
 
     g2 = nx.Graph()
     g2.add_nodes_from([0, 1, 2])
     g2.add_edges_from([(0, 1), (0, 2), (1, 2)])
-    nx.set_node_attributes(g2, {0: np.array([1.8, 0.5]), 1: np.array([-0.1, 0.2]), 2: np.array([2.3, 1.2])}, "attributes")
+    nx.set_node_attributes(
+        g2,
+        {0: np.array([1.8, 0.5]), 1: np.array([-0.1, 0.2]), 2: np.array([2.3, 1.2])},
+        "attributes",
+    )
 
     result = graph_from_networkx([g1, g2], node_labels_tag="attributes")
 
@@ -246,10 +293,154 @@ def test_networkx_node_attributed():
             np.testing.assert_array_equal(nl[node], nx_g.nodes[node]["attributes"])
 
 
+def test_networkx_from_graph_simple():
+    """Test networkx_from_graph on simple undirected graphs with no labels or weights."""
+    try:
+        import networkx as nx
+    except ImportError:
+        return
+
+    ga = {0: {1: 1.0, 2: 1.0}, 1: {0: 1.0, 2: 1.0}, 2: {0: 1.0, 1: 1.0}}
+    gb = {4: {5: 1.0, 7: 1.0}, 5: {4: 1.0, 7: 1.0}, 7: {4: 1.0, 5: 1.0}}
+    graphs = [Graph(ga), Graph(gb)]
+
+    result = networkx_from_graph(graphs)
+
+    assert isinstance(result, list) and len(result) == 2
+    for nx_g, ed in zip(result, [ga, gb]):
+        assert isinstance(nx_g, nx.Graph)
+        for u, nbrs in ed.items():
+            for v in nbrs:
+                assert nx_g.has_edge(u, v)
+        assert sorted(nx_g.nodes) == sorted(ed.keys())
+
+
+def test_networkx_from_graph_node_labeled():
+    """Test networkx_from_graph writes node labels under the configured tag."""
+    try:
+        import networkx as nx
+    except ImportError:
+        return
+
+    ga = {0: {1: 1.0}, 1: {0: 1.0}, 2: {3: 1.0}, 3: {2: 1.0}}
+    nl = {0: "a", 1: "b", 2: "a", 3: "b"}
+    g = Graph(ga, nl, None)
+
+    result = networkx_from_graph(g, node_labels_tag="label")
+
+    assert isinstance(result, nx.Graph)
+    for node, label in nl.items():
+        assert result.nodes[node]["label"] == label
+
+
+def test_networkx_from_graph_edge_labeled():
+    """Test networkx_from_graph writes edge labels under the configured tag."""
+    try:
+        import networkx as nx
+    except ImportError:
+        return
+
+    ga = {0: {1: 1.0, 2: 1.0}, 1: {0: 1.0, 2: 1.0}, 2: {0: 1.0, 1: 1.0}}
+    el = {(0, 1): "el01", (1, 2): "el12", (0, 2): "el02"}
+    g = Graph(ga, None, el)
+
+    result = networkx_from_graph(g, edge_labels_tag="el")
+
+    assert isinstance(result, nx.Graph)
+    assert result.edges[0, 1]["el"] == "el01"
+    assert result.edges[1, 2]["el"] == "el12"
+    assert result.edges[0, 2]["el"] == "el02"
+
+
+def test_networkx_from_graph_weighted():
+    """Test networkx_from_graph writes weights under the 'weight' tag by default."""
+    try:
+        import networkx as nx
+    except ImportError:
+        return
+
+    ga = {0: {1: 2.5, 2: 3.0}, 1: {0: 2.5, 2: 1.5}, 2: {0: 3.0, 1: 1.5}}
+    g = Graph(ga)
+
+    result = networkx_from_graph(g)
+
+    assert isinstance(result, nx.Graph)
+    assert result.edges[0, 1]["weight"] == 2.5
+    assert result.edges[1, 2]["weight"] == 1.5
+    assert result.edges[0, 2]["weight"] == 3.0
+
+    result2 = networkx_from_graph(g, edge_weight_tag=None)
+    for u, v in result2.edges():
+        assert "weight" not in result2.edges[u, v]
+
+
+def test_networkx_from_graph_roundtrip():
+    """Test nx -> grakel -> nx conversion preserves edges, labels and weights."""
+    try:
+        import networkx as nx
+    except ImportError:
+        return
+
+    g_nx = nx.Graph()
+    g_nx.add_nodes_from([0, 1, 2, 3])
+    g_nx.add_edges_from(
+        [
+            (0, 1, {"weight": 1.0}),
+            (1, 2, {"weight": 2.0}),
+            (2, 3, {"weight": 3.0}),
+            (0, 3, {"weight": 0.5}),
+        ]
+    )
+    nx.set_node_attributes(g_nx, {0: "a", 1: "b", 2: "a", 3: "c"}, "label")
+    nx.set_edge_attributes(
+        g_nx,
+        {(0, 1): "e01", (1, 2): "e12", (2, 3): "e23", (0, 3): "e03"},
+        "el",
+    )
+
+    grakel_g = graph_from_networkx(g_nx, node_labels_tag="label", edge_labels_tag="el", edge_weight_tag="weight")
+    back = networkx_from_graph(grakel_g, node_labels_tag="label", edge_labels_tag="el", edge_weight_tag="weight")
+
+    assert isinstance(back, nx.Graph)
+    assert sorted(back.nodes) == sorted(g_nx.nodes)
+    for u, v, data in g_nx.edges(data=True):
+        assert back.has_edge(u, v)
+        assert back.edges[u, v]["weight"] == data["weight"]
+        assert back.edges[u, v]["el"] == g_nx.edges[u, v]["el"]
+    for node in g_nx.nodes:
+        assert back.nodes[node]["label"] == g_nx.nodes[node]["label"]
+
+
+def test_networkx_from_graph_create_using():
+    """Test networkx_from_graph respects the create_using class."""
+    try:
+        import networkx as nx
+    except ImportError:
+        return
+
+    ga = {0: {1: 1.0, 2: 1.0}, 1: {0: 1.0, 2: 1.0}, 2: {0: 1.0, 1: 1.0}}
+    g = Graph(ga)
+
+    digraph = networkx_from_graph(g, create_using=nx.DiGraph)
+    assert isinstance(digraph, nx.DiGraph)
+    assert sorted(digraph.edges) == sorted([(0, 1), (0, 2), (1, 0), (1, 2), (2, 0), (2, 1)])
+
+    multigraph = networkx_from_graph(g, create_using=nx.MultiGraph)
+    assert isinstance(multigraph, nx.MultiGraph)
+    # MultiGraph is undirected: (0,1) and (1,0) collapse into a single edge.
+    undirected_edges = {(min(u, v), max(u, v)) for u, v in multigraph.edges()}
+    assert undirected_edges == {(0, 1), (0, 2), (1, 2)}
+
+
 def test_csv():
     """Testing Graph object consistency for an edge-dictionary-type initialization object."""
 
-    ga = {0: {0: 1.0, 1: 1.0, 3: 3.0}, 1: {0: 1.0, 3: 2.0}, 2: {0: 2.0, 1: 3.0, 3: 1.0}, 3: {0: 1.0}}
+    ga = {
+        0: {0: 1.0, 1: 1.0, 3: 3.0},
+        1: {0: 1.0, 3: 2.0},
+        2: {0: 2.0, 1: 3.0, 3: 1.0},
+        3: {0: 1.0},
+    }
 
     ganl = {0: "l1", 1: "l2", 2: "l3", 3: "l4"}
 
@@ -276,7 +467,12 @@ def test_csv():
                 print(",".join(map(str, [k[0], k[1], ga[k[0]][k[1]], gael[k]])), file=f)
 
     graphs = list(
-        graph_from_csv(edge_files=(edge_files, True, False), node_files=(node_files, False), index_type=int, directed=True)
+        graph_from_csv(
+            edge_files=(edge_files, True, False),
+            node_files=(node_files, False),
+            index_type=int,
+            directed=True,
+        )
     )
 
     for f in node_files + edge_files:
@@ -319,7 +515,14 @@ def test_KM_Kfold():
 
     # Execute Kfold
     cross_validate_Kfold_SVM(
-        K, y, n_iter=n_iter, n_splits=n_splits, C_grid=C_grid, random_state=rs, scoring=scoring, fold_reduce=None
+        K,
+        y,
+        n_iter=n_iter,
+        n_splits=n_splits,
+        C_grid=C_grid,
+        random_state=rs,
+        scoring=scoring,
+        fold_reduce=None,
     )
 
 
@@ -371,7 +574,10 @@ def test_torch_geometric():
 
     edge_index = torch.tensor([[0, 0, 1, 1, 2, 2], [1, 2, 0, 2, 0, 1]], dtype=torch.long)
     x = torch.tensor([[0, 1], [1, 0], [1, 0]], dtype=torch.float)
-    edge_attr = torch.tensor([[-0.4, -4.2], [0.2, -1.5], [2.3, -2.1], [1.8, -0.1], [-3.5, -0.2], [-2.8, 0.1]], dtype=torch.float)
+    edge_attr = torch.tensor(
+        [[-0.4, -4.2], [0.2, -1.5], [2.3, -2.1], [1.8, -0.1], [-3.5, -0.2], [-2.8, 0.1]],
+        dtype=torch.float,
+    )
 
     y = torch.tensor([1])
     g2 = Data(x=x, edge_index=edge_index, edge_attr=edge_attr, y=y)

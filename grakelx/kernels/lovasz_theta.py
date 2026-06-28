@@ -508,4 +508,4 @@ def _fitball_(A):
 
 
 def inner_product(x, y):
-    return x.T.dot(y)
+    return x.T.dot(y)[0, 0]
