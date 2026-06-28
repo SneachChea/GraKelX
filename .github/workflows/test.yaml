@@ -9,6 +9,7 @@ on:
       - main
 
   pull_request:
+    types: [ready_for_review]
     branches:
       - main
 
@@ -45,21 +46,35 @@ jobs:
       uses: actions/checkout@v4
 
     - name: Setup Python
-      uses: actions/setup-python@v5
+      uses: actions/setup-python@v6
       with:
         python-version: ${{ matrix.py }}
 
     - name: Install uv
-      uses: astral-sh/setup-uv@v5
+      uses: astral-sh/setup-uv@v6
       with:
         enable-cache: true
         cache-dependency-glob: "uv.lock"
-
+        cache-python: true
+    - name: Install ccache
+      run: |
+        if [[ "$RUNNER_OS" == "Windows" ]]; then choco install ccache; else sudo apt-get install -y ccache || brew install ccache; fi
+      continue-on-error: true
+    - name: Restore ccache
+      uses: actions/cache@v5
+      with:
+        path: ~/.ccache
+        key: ccache-${{ runner.os }}-${{ matrix.py }}-${{ hashFiles('setup.py', 'grakelx/kernels/_c_functions/functions.pyx', 'grakelx/kernels/_c_functions/include/functions.hpp', 'grakelx/kernels/_c_functions/src/ArashPartov.cpp', 'grakelx/kernels/_c_functions/src/sm_core.cpp', 'grakelx/kernels/_isomorphism/bliss.pyx', 'grakelx/kernels/_isomorphism/intpyblissmodule_2.cc', 'grakelx/kernels/_isomorphism/intpyblissmodule_3.cc', 'grakelx/kernels/_isomorphism/bliss-0.50/**') }}
+        restore-keys: |
+          ccache-${{ runner.os }}-${{ matrix.py }}-
     - name: Install dependencies
       run: uv sync --group test
 
     - name: Build Cython extensions
-      run: uv run python setup.py build_ext --inplace
+      run: |
+        export CC="ccache $CC"
+        export CXX="ccache $CXX"
+        uv run python setup.py build_ext --inplace
 
     - name: Tests
       run: uv run pytest

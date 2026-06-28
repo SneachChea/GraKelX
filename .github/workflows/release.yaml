@@ -1,12 +1,8 @@
-# Workflow to build and test wheels
-# =================================
+# Workflow to build, test and publish wheels to PyPI
+# ===================================================
 # This github action gets triggered whenever a git tag (matching v*) is pushed,
-# or manually via workflow_dispatch. It generates both wheels and distributions
-# files, making sure their contents are correct via unit-testing.
-#
-# Please note that creating a git tag and pushing it (git tag <>; git push --tags) is not
-# sufficient to append the wheels and distribution files to your release.
-# You need to generate a new release using github, not git.
+# or manually via workflow_dispatch. On tag push, it builds wheels + sdist,
+# runs tests, and publishes to PyPI automatically.
 #
 # Guides
 # ------
@@ -147,8 +143,8 @@ jobs:
           path: dist/*.tar.gz
 
   release_assets:
-    # Only when manually specified
-    if: ${{ inputs.deploy }}
+    # Publish on tag push (v*) or manual deploy
+    if: ${{ inputs.deploy || github.event_name == 'push' }}
 
     name: Upload Release
     runs-on: ubuntu-latest
