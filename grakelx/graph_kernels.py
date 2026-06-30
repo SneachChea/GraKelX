@@ -420,7 +420,7 @@ class GraphKernel(BaseEstimator, TransformerMixin):
         """Initialize all transformer arguments, needing initialisation."""
         if not self._initialized["Nystroem"]:
             if type(self.Nystroem) not in [int, bool]:
-                raise ValueError("Nystroem parameter must be an int, " "indicating the number of components" "or a boolean")
+                raise ValueError("Nystroem parameter must be an int, indicating the number of componentsor a boolean")
             elif self.Nystroem is False:
                 self.nystroem_ = False
             elif self.Nystroem in [0, -1] or self.Nystroem is True:
@@ -483,7 +483,7 @@ class GraphKernel(BaseEstimator, TransformerMixin):
             raise ValueError("each element of the list of kernels must be a dictionary or a string")
         else:
             if "name" not in kernel:
-                raise ValueError("each dictionary concerning a kernel must " 'have a "name" parameter designating the ' "kernel")
+                raise ValueError('each dictionary concerning a kernel must have a "name" parameter designating the kernel')
             kernel_name = kernel.pop("name")
 
         for keys, val in hidden_args.items():
@@ -502,7 +502,7 @@ class GraphKernel(BaseEstimator, TransformerMixin):
 
         if kernel_name in sbks:
             if len(kernel_list) != 0:
-                warnings.warn("Kernel List not empty while reaching a base-kernel - " "the rest kernel names will be ignored")
+                warnings.warn("Kernel List not empty while reaching a base-kernel - the rest kernel names will be ignored")
 
             if kernel_name in sbk[0]:
                 return VertexHistogram, kernel

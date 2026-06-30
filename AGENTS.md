@@ -1,5 +1,8 @@
 # GraKeL — Agent Guide
 
+**Repository**: `SneachChea/GraKelX` — <https://github.com/SneachChea/GraKelX>  
+Fork of the original [GraKeL](https://github.com/ysig/GraKeL) library (v0.1.11). Published on PyPI as `grakelx`.
+
 ## Build
 
 ```bash

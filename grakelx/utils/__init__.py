@@ -386,14 +386,14 @@ def graph_from_pandas(edge_df, node_df=None, directed=False, as_Graph=False):
                     graphs[gidx]["edge_label"] = None
             if src not in graphs[gidx]["graph"]:
                 if throw_error:
-                    raise ValueError("This node didn't appear on node labels dataframe for graph " "with id " + str(gidx))
+                    raise ValueError("This node didn't appear on node labels dataframe for graph with id " + str(gidx))
                 else:
                     graphs[gidx]["graph"][src] = dict()
             graphs[gidx]["graph"][src][dst] = get_weight(row)
             if not directed:
                 if dst not in graphs[gidx]["graph"]:
                     if throw_error:
-                        raise ValueError("This node didn't appear on node labels dataframe " "for graph with id " + str(gidx))
+                        raise ValueError("This node didn't appear on node labels dataframe for graph with id " + str(gidx))
                     else:
                         graphs[gidx]["graph"][dst] = dict()
                 graphs[gidx]["graph"][dst][src] = get_weight(row)
@@ -478,7 +478,7 @@ def graph_from_csv(edge_files, node_files=None, index_type=str, directed=False, 
 
     def node_files_error():
         raise ValueError(
-            "node_files argument can be None or contain an iterable of strings" "of edge files and attributes_flag bool or None"
+            "node_files argument can be None or contain an iterable of stringsof edge files and attributes_flag bool or None"
         )
 
     if type(index_type) is not type:

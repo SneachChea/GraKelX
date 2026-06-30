@@ -344,7 +344,7 @@ class Kernel(BaseEstimator, TransformerMixin):
         """Initialize all transformer arguments, needing initialisation."""
         if not self._initialized["n_jobs"]:
             if type(self.n_jobs) is not int and self.n_jobs is not None:
-                raise ValueError("n_jobs parameter must be an int " "indicating the number of jobs as in joblib or None")
+                raise ValueError("n_jobs parameter must be an int indicating the number of jobs as in joblib or None")
             elif self.n_jobs is None:
                 self._parallel = None
             else:

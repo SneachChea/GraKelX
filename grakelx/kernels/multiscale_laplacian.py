@@ -172,7 +172,7 @@ class MultiscaleLaplacian(Kernel):
                     x.desired_format(self._graph_format)
                 else:
                     raise TypeError(
-                        "each element of X must be either a " "graph or an iterable with at least 1 " "and at most 3 elements\n"
+                        "each element of X must be either a graph or an iterable with at least 1 and at most 3 elements\n"
                     )
                 phi_d = x.get_labels()
                 A = x.get_adjacency_matrix()

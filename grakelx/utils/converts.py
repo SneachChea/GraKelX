@@ -249,7 +249,7 @@ def graph_from_networkx(
             return 1.0
 
     else:
-        raise ValueError("weight_labels_tag must be a str indicating  " "tag of the labels inside edges or None (1.0)")
+        raise ValueError("weight_labels_tag must be a str indicating  tag of the labels inside edges or None (1.0)")
 
     if isinstance(X, nx.Graph):
         graphs = [X]

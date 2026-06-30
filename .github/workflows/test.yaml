@@ -67,14 +67,31 @@ jobs:
         key: ccache-${{ runner.os }}-${{ matrix.py }}-${{ hashFiles('setup.py', 'grakelx/kernels/_c_functions/functions.pyx', 'grakelx/kernels/_c_functions/include/functions.hpp', 'grakelx/kernels/_c_functions/src/ArashPartov.cpp', 'grakelx/kernels/_c_functions/src/sm_core.cpp', 'grakelx/kernels/_isomorphism/bliss.pyx', 'grakelx/kernels/_isomorphism/intpyblissmodule_2.cc', 'grakelx/kernels/_isomorphism/intpyblissmodule_3.cc', 'grakelx/kernels/_isomorphism/bliss-0.50/**') }}
         restore-keys: |
           ccache-${{ runner.os }}-${{ matrix.py }}-
+    - name: Setup ccache symlinks
+      run: |
+        BIN_DIR="$RUNNER_TEMP/ccache_bin"
+        mkdir -p "$BIN_DIR"
+        if command -v ccache >/dev/null 2>&1; then
+          CCACHE_BIN=$(command -v ccache)
+          if [[ "$RUNNER_OS" == "Windows" ]]; then
+            for cc in cc gcc g++ c++ clang clang++; do
+              cp "$CCACHE_BIN" "$BIN_DIR/${cc}.exe"
+            done
+            echo "$BIN_DIR" >> "$GITHUB_PATH"
+          else
+            for cc in cc gcc g++ c++ clang clang++; do
+              ln -sf "$CCACHE_BIN" "$BIN_DIR/$cc"
+            done
+            echo "$BIN_DIR" >> "$GITHUB_PATH"
+          fi
+        else
+          echo "ccache not found — skipping symlinks, build will proceed without caching"
+        fi
     - name: Install dependencies
       run: uv sync --group test
 
     - name: Build Cython extensions
-      run: |
-        export CC="ccache $CC"
-        export CXX="ccache $CXX"
-        uv run python setup.py build_ext --inplace
+      run: uv run python setup.py build_ext --inplace
 
     - name: Tests
       run: uv run pytest

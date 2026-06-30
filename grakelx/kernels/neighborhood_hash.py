@@ -161,9 +161,7 @@ class NeighborhoodHash(Kernel):
 
             # Hash labels
             if len(labels_hash_set) > self._max_number:
-                warnings.warn(
-                    "Number of labels is smaller than" "the biggest possible.. " "Collisions will appear on the " "new labels."
-                )
+                warnings.warn("Number of labels is smaller thanthe biggest possible.. Collisions will appear on the new labels.")
 
                 # If labels exceed the biggest possible size
                 nl, nrl = list(), len(labels_hash_set)

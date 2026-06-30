@@ -127,9 +127,7 @@ class GraphHopper(Kernel):
                         g.change_format(self._graph_format)
                 else:
                     raise TypeError(
-                        "each element of X must be either a "
-                        "graph object or a list with at least "
-                        "a graph like object and node, "
+                        "each element of X must be either a graph object or a list with at least a graph like object and node, "
                     )
 
                 spm, attr = g.build_shortest_path_matrix(labels="vertex")
