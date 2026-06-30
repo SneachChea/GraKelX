@@ -4,15 +4,11 @@
 # License: BSD 3 clause
 import warnings
 from collections import Counter
-from itertools import chain
+from collections.abc import Iterable
+from itertools import chain, filterfalse
 from numbers import Real
 
 import numpy as np
-
-# Python 2/3 cross-compatibility import
-from six import iteritems, itervalues
-from six.moves import filterfalse
-from six.moves.collections_abc import Iterable
 from sklearn.preprocessing import normalize as normalizer
 from sklearn.utils import check_random_state
 
@@ -79,7 +75,7 @@ class Propagation(Kernel):
         w=0.01,
     ):
         """Initialise a propagation kernel."""
-        super(Propagation, self).__init__(n_jobs=n_jobs, verbose=verbose, normalize=normalize)
+        super().__init__(n_jobs=n_jobs, verbose=verbose, normalize=normalize)
 
         self.random_state = random_state
         self.M = M
@@ -90,7 +86,7 @@ class Propagation(Kernel):
 
     def initialize(self):
         """Initialize all transformer arguments, needing initialization."""
-        super(Propagation, self).initialize()
+        super().initialize()
 
         if not self._initialized["random_state"]:
             self.random_state_ = check_random_state(self.random_state)
@@ -208,7 +204,7 @@ class Propagation(Kernel):
                 transition_matrix[i] = normalizer(T, axis=1, norm="l1")
                 label = g.get_labels(purpose="adjacency")
                 try:
-                    labels |= set(itervalues(label))
+                    labels |= set(label.values())
                 except TypeError:
                     raise TypeError("For a non attributed kernel, labels should be hashable.")
                 L.append((g.nv(), label))
@@ -228,7 +224,7 @@ class Propagation(Kernel):
                 new_elements = labels - self._parent_labels
                 if len(new_elements) > 0:
                     new_enum_labels = iter((l, i) for (i, l) in enumerate(list(new_elements), len(self._enum_labels)))
-                    enum_labels = dict(chain(iteritems(self._enum_labels), new_enum_labels))
+                    enum_labels = dict(chain(self._enum_labels.items(), new_enum_labels))
                 else:
                     enum_labels = self._enum_labels
 
@@ -286,7 +282,7 @@ class Propagation(Kernel):
                     hashes = self.calculate_LSH(P, self._u[t], self._b[t])
                     hd = dict(
                         chain(
-                            iteritems(self._hd[t]),
+                            self._hd[t].items(),
                             iter(
                                 (j, i)
                                 for i, j in enumerate(
@@ -323,7 +319,7 @@ class Propagation(Kernel):
 
                     hd = dict(
                         chain(
-                            iteritems(self._hd[t]),
+                            self._hd[t].items(),
                             iter(
                                 (j, i)
                                 for i, j in enumerate(
@@ -346,7 +342,7 @@ class Propagation(Kernel):
 
                     # calculate hashes for the remaining
                     hashes = self.calculate_LSH(P[vertices_p, :], u, self._b[t])
-                    hd = dict(chain(iteritems(hd), iter((j, i) for i, j in enumerate(hashes, len(hd)))))
+                    hd = dict(chain(hd.items(), iter((j, i) for i, j in enumerate(hashes, len(hd)))))
 
                     features_p = np.vectorize(lambda i: hd[i], otypes=[int])(hashes)
 
@@ -452,7 +448,7 @@ class PropagationAttr(Propagation):
         w=4,
     ):
         """Initialise a propagation kernel."""
-        super(PropagationAttr, self).__init__(
+        super().__init__(
             n_jobs=n_jobs,
             verbose=verbose,
             normalize=normalize,
@@ -465,7 +461,7 @@ class PropagationAttr(Propagation):
 
     def initialize(self):
         """Initialize all transformer arguments, needing initialization."""
-        super(PropagationAttr, self).initialize()
+        super().initialize()
 
     def parse_input(self, X):
         """Parse and create features for the attributed propation kernel.
@@ -597,7 +593,7 @@ class PropagationAttr(Propagation):
 
                     hd = dict(
                         chain(
-                            iteritems(self._hd[t]),
+                            self._hd[t].items(),
                             iter(
                                 (j, i)
                                 for i, j in enumerate(

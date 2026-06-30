@@ -4,14 +4,10 @@
 # License: BSD 3 clause
 import math
 import warnings
-from builtins import range
+from collections.abc import Iterable
 
 import numpy as np
 from scipy.interpolate import interp1d
-
-# Python 2/3 cross-compatibility import
-from six import iteritems, itervalues
-from six.moves.collections_abc import Iterable
 from sklearn.exceptions import NotFittedError
 from sklearn.utils import check_random_state
 from sklearn.utils.validation import check_is_fitted
@@ -113,7 +109,7 @@ class GraphletSampling(Kernel):
 
     def __init__(self, n_jobs=None, normalize=False, verbose=False, random_state=None, k=5, sampling=None):
         """Initialise a subtree_wl kernel."""
-        super(GraphletSampling, self).__init__(n_jobs=n_jobs, normalize=normalize, verbose=verbose)
+        super().__init__(n_jobs=n_jobs, normalize=normalize, verbose=verbose)
 
         self.random_state = random_state
         self.k = k
@@ -212,7 +208,7 @@ class GraphletSampling(Kernel):
 
                             isomorphism_prediction = interp1d(
                                 list(fallback_map.keys()),
-                                list(itervalues(fallback_map)),
+                                list(fallback_map.values()),
                                 kind="cubic",
                             )
                             a = isomorphism_prediction(k)
@@ -267,11 +263,11 @@ class GraphletSampling(Kernel):
             phi_x = self._phi_X
         except NotFittedError:
             phi_x = np.zeros(shape=(self._nx, len(self._graph_bins)))
-            for (i, j), v in iteritems(self.X):
+            for (i, j), v in self.X.items():
                 phi_x[i, j] = v
             self._phi_X = phi_x
         phi_y = np.zeros(shape=(self._ny, len(self._graph_bins) + len(self._Y_graph_bins)))
-        for (i, j), v in iteritems(Y):
+        for (i, j), v in Y.items():
             phi_y[i, j] = v
 
         # store _phi_Y for independent (of normalization arg diagonal-calls)
@@ -312,7 +308,7 @@ class GraphletSampling(Kernel):
 
         # calculate feature matrices.
         phi_x = np.zeros(shape=(self._nx, len(self._graph_bins)))
-        for (i, j), v in iteritems(self.X):
+        for (i, j), v in self.X.items():
             phi_x[i, j] = v
 
         # Transform - calculate kernel matrix

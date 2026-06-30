@@ -3,11 +3,9 @@
 # Author: Ioannis Siglidis <y.siglidis@gmail.com>
 # License: BSD 3 clause
 import warnings
+from collections.abc import Iterable
 
 import numpy as np
-
-# For python2/3 compatibility
-from six.moves.collections_abc import Iterable
 from sklearn.exceptions import NotFittedError
 from sklearn.utils.validation import check_is_fitted
 
@@ -44,7 +42,7 @@ class ShortestPathAttr(Kernel):
 
     def __init__(self, n_jobs=None, normalize=False, verbose=False, algorithm_type="auto", metric=np.dot):
         """Initialise a `shortest_path_attr` kernel."""
-        super(ShortestPathAttr, self).__init__(n_jobs=n_jobs, normalize=normalize, verbose=verbose)
+        super().__init__(n_jobs=n_jobs, normalize=normalize, verbose=verbose)
 
         self.algorithm_type = algorithm_type
         self.metric = metric
@@ -52,7 +50,7 @@ class ShortestPathAttr(Kernel):
 
     def initialize(self):
         """Initialize all transformer arguments, needing initialization."""
-        super(ShortestPathAttr, self).initialize()
+        super().initialize()
         if not self._initialized["algorithm_type"]:
             if self.algorithm_type == "auto":
                 self._graph_format = "auto"
@@ -214,7 +212,7 @@ class ShortestPath(Kernel):
 
     def __init__(self, n_jobs=None, normalize=False, verbose=False, with_labels=True, algorithm_type="auto"):
         """Initialize a `shortest_path` kernel."""
-        super(ShortestPath, self).__init__(n_jobs=n_jobs, normalize=normalize, verbose=verbose)
+        super().__init__(n_jobs=n_jobs, normalize=normalize, verbose=verbose)
 
         self.with_labels = with_labels
         self.algorithm_type = algorithm_type

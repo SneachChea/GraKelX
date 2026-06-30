@@ -1,5 +1,5 @@
 <p align="center">
-  <img width="50%" src="https://raw.githubusercontent.com/ysig/GraKeL/0.1a7/doc/_figures/logo.svg?sanitize=true" />
+  <img width="70%" src="doc/_figures/logo_grakelx.png" alt="GraKeLX Logo" />
 </p>
 
 --------------------------------------------------------------------------------

@@ -67,7 +67,7 @@ def generate_dataset(
         raise TypeError("Number of graphs must be an integer bigger than 1.")
 
     if type(n_graphs_test) is not int or n_graphs_test < 1 or n_graphs_test >= n_graphs:
-        raise TypeError("Number of graphs inside test must be smaller than the total " "number of graphs and positive.")
+        raise TypeError("Number of graphs inside test must be smaller than the total number of graphs and positive.")
 
     rs = check_random_state(random_state)
 
@@ -79,7 +79,7 @@ def generate_dataset(
         or type(r_vertices[0]) is not int
         or type(r_vertices[1]) is not int
     ):
-        raise TypeError("r_vertices must be a tuple containing the minimum " "and the maximum numebr of vertices graph ")
+        raise TypeError("r_vertices must be a tuple containing the minimum and the maximum numebr of vertices graph ")
 
     if (
         type(r_connectivity) is not tuple
@@ -103,7 +103,7 @@ def generate_dataset(
         or not isinstance(r_weight_edges[0], Real)
         or not isinstance(r_weight_edges[1], Real)
     ):
-        raise TypeError("r_weight_edges must be a tuple containing the minimum " "and the maximum values for an edge weight ")
+        raise TypeError("r_weight_edges must be a tuple containing the minimum and the maximum values for an edge weight ")
 
     if type(features) is str or features is None:
         features = (features,)
@@ -111,7 +111,7 @@ def generate_dataset(
     dna, dea, nnl, nel = 4, 4, 5, 5
 
     if type(features) is not tuple or len(features) > 4 or len(features) == 0:
-        raise TypeError("features can either be a tuple of at most four elements and at least one" "or a string")
+        raise TypeError("features can either be a tuple of at most four elements and at least oneor a string")
     elif features[0] is not None:
         fiter = iter(features)
         flag = True
@@ -132,13 +132,13 @@ def generate_dataset(
                                 nel = f
                                 f = next(fiter)
                             else:
-                                raise TypeError("The number of distinct node labels must " "bigger equal to 2")
+                                raise TypeError("The number of distinct node labels must bigger equal to 2")
                     except StopIteration:
                         break
                 elif f == "na":
                     try:
                         if pnl:
-                            raise ValueError("The dataset can either have node-labels " "or node-attributes")
+                            raise ValueError("The dataset can either have node-labels or node-attributes")
                         pna = True
                         f = next(fiter)
                         if type(f) is int:
@@ -160,7 +160,7 @@ def generate_dataset(
                                 nel = f
                                 f = next(fiter)
                             else:
-                                raise TypeError("The number of distinct edge labels must bigger " "equal to 2")
+                                raise TypeError("The number of distinct edge labels must bigger equal to 2")
                     except StopIteration:
                         break
                 elif f == "ea":

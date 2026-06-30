@@ -3,15 +3,12 @@
 # Author: Ioannis Siglidis <y.siglidis@gmail.com>
 # License: BSD 3 clause
 import warnings
+from collections.abc import Iterable
 from itertools import chain
 
 import numpy as np
 from scipy.sparse import csr_matrix
 from scipy.sparse.linalg import eigs
-
-# Python 2/3 cross-compatibility import
-from six import iteritems, itervalues
-from six.moves.collections_abc import Iterable
 
 from grakelx.graph import Graph
 from grakelx.kernels.kernel import Kernel
@@ -47,7 +44,7 @@ class PyramidMatch(Kernel):
 
     def __init__(self, n_jobs=None, normalize=False, verbose=False, with_labels=True, L=4, d=6):
         """Initialise a `pyramid_match` kernel."""
-        super(PyramidMatch, self).__init__(n_jobs=n_jobs, normalize=normalize, verbose=verbose)
+        super().__init__(n_jobs=n_jobs, normalize=normalize, verbose=verbose)
 
         self.with_labels = with_labels
         self.L = L
@@ -56,7 +53,7 @@ class PyramidMatch(Kernel):
 
     def initialize(self):
         """Initialize all transformer arguments, needing initialization."""
-        super(PyramidMatch, self).initialize()
+        super().initialize()
 
         if not self._initialized["with_labels"]:
             if not isinstance(self.with_labels, bool):
@@ -152,7 +149,7 @@ class PyramidMatch(Kernel):
                 self._num_labels = 0
                 self._labels = set()
                 for L in Ls:
-                    self._labels |= set(itervalues(L))
+                    self._labels |= set(L.values())
                 self._num_labels = len(self._labels)
                 self._labels = {l: i for (i, l) in enumerate(self._labels)}
                 return self._histogram_calculation(Us, Ls, self._labels)
@@ -160,11 +157,11 @@ class PyramidMatch(Kernel):
             elif self._method_calling == 3:
                 labels = set()
                 for L in Ls:
-                    labels |= set(itervalues(L))
+                    labels |= set(L.values())
                 rest_labels = labels - set(self._labels.keys())
                 nouveau_labels = dict(
                     chain(
-                        iteritems(self._labels),
+                        self._labels.items(),
                         ((j, i) for (i, j) in enumerate(rest_labels, len(self._labels))),
                     )
                 )

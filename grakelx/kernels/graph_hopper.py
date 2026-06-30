@@ -4,9 +4,6 @@
 # License: BSD 3 clause
 from collections import defaultdict
 from collections.abc import Iterable
-
-# from numpy.matlib import repmat
-# Python 2/3 cross-compatibility import
 from itertools import filterfalse
 from numbers import Real
 from warnings import warn
@@ -45,13 +42,13 @@ class GraphHopper(Kernel):
 
     def __init__(self, n_jobs=None, normalize=False, verbose=False, kernel_type="linear"):
         """Initialize an Graph Hopper kernel."""
-        super(GraphHopper, self).__init__(n_jobs=n_jobs, normalize=normalize, verbose=verbose)
+        super().__init__(n_jobs=n_jobs, normalize=normalize, verbose=verbose)
         self.kernel_type = kernel_type
         self._initialized.update({"kernel_type": False})
 
     def initialize(self):
         """Initialize all transformer arguments, needing initialization."""
-        super(GraphHopper, self).initialize()
+        super().initialize()
         if not self._initialized["kernel_type"]:
             if type(self.kernel_type) is str:
                 if self.kernel_type == "linear":
@@ -130,9 +127,7 @@ class GraphHopper(Kernel):
                         g.change_format(self._graph_format)
                 else:
                     raise TypeError(
-                        "each element of X must be either a "
-                        "graph object or a list with at least "
-                        "a graph like object and node, "
+                        "each element of X must be either a graph object or a list with at least a graph like object and node, "
                     )
 
                 spm, attr = g.build_shortest_path_matrix(labels="vertex")

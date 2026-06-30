@@ -1,30 +1,18 @@
 """The base file for loading default datasets."""
 
-# Python 2/3 cross-compatibility import
-from __future__ import print_function
-
 import os
 import shutil
 import ssl
 import zipfile
-
-try:
-    # Python 2
-    from urllib2 import HTTPError, urlopen
-except ImportError:
-    # Python 3+
-    from urllib.error import HTTPError
-    from urllib.request import urlopen
-
 from collections import Counter
 from shutil import copyfileobj
+from urllib.error import HTTPError
+from urllib.request import urlopen
 
 import numpy as np
 from sklearn.utils import Bunch
 
 from grakelx.graph import Graph
-
-global datasets_metadata, symmetric_dataset
 
 dataset_metadata = {
     "AIDS": {
@@ -472,7 +460,7 @@ def read_data(
     edge_labels = dict()
 
     # Associate graphs nodes with indexes
-    with open(indicator_path, "r") as f:
+    with open(indicator_path) as f:
         for i, line in enumerate(f, 1):
             ngc[i] = int(line[:-1])
             if int(line[:-1]) not in Graphs:
@@ -483,7 +471,7 @@ def read_data(
                 edge_labels[int(line[:-1])] = dict()
 
     # Extract graph edges
-    with open(edges_path, "r") as f:
+    with open(edges_path) as f:
         for i, line in enumerate(f, 1):
             edge = line[:-1].replace(" ", "").split(",")
             elc[i] = (int(edge[0]), int(edge[1]))
@@ -493,12 +481,12 @@ def read_data(
 
     # Extract node attributes
     if prefer_attr_nodes and dataset_metadata[name].get("na", os.path.exists(node_attributes_path)):
-        with open(node_attributes_path, "r") as f:
+        with open(node_attributes_path) as f:
             for i, line in enumerate(f, 1):
                 node_labels[ngc[i]][i] = [float(num) for num in line[:-1].replace(" ", "").split(",")]
     # Extract node labels
     elif dataset_metadata[name].get("nl", os.path.exists(node_labels_path)):
-        with open(node_labels_path, "r") as f:
+        with open(node_labels_path) as f:
             for i, line in enumerate(f, 1):
                 parts = line[:-1].replace(" ", "").split(",")
                 # Some datasets (e.g. Cuneiform) ship multi-value node labels
@@ -514,7 +502,7 @@ def read_data(
 
     # Extract edge attributes
     if prefer_attr_edges and dataset_metadata[name].get("ea", os.path.exists(edge_attributes_path)):
-        with open(edge_attributes_path, "r") as f:
+        with open(edge_attributes_path) as f:
             for i, line in enumerate(f, 1):
                 attrs = [float(num) for num in line[:-1].replace(" ", "").split(",")]
                 edge_labels[ngc[elc[i][0]]][elc[i]] = attrs
@@ -523,7 +511,7 @@ def read_data(
 
     # Extract edge labels
     elif dataset_metadata[name].get("el", os.path.exists(edge_labels_path)):
-        with open(edge_labels_path, "r") as f:
+        with open(edge_labels_path) as f:
             for i, line in enumerate(f, 1):
                 parts = line[:-1].replace(" ", "").split(",")
                 if len(parts) == 1:
@@ -548,7 +536,7 @@ def read_data(
 
     if with_classes:
         classes = []
-        with open(graph_classes_path, "r") as f:
+        with open(graph_classes_path) as f:
             for line in f:
                 classes.append(int(line[:-1]))
 
@@ -621,7 +609,7 @@ def fetch_dataset(
         By default all grakel data is stored in '~/grakel_data' subfolders.
 
     download_if_missing : boolean, default=True
-        If False, raise a IOError if the data is not locally available instead
+        If False, raise a OSError if the data is not locally available instead
         of trying to download the data from the source site.
 
     with_classes : bool, default=False
@@ -674,7 +662,7 @@ def fetch_dataset(
                     print("Downloading dataset for", name + "..")
                 _download_zip(dataset_metadata[name]["link"], name)
             else:
-                raise IOError("Dataset " + name + " was not found on " + str(data_home))
+                raise OSError("Dataset " + name + " was not found on " + str(data_home))
         else:
             # move to the general data directory
             os.chdir(data_home)

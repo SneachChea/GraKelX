@@ -12,7 +12,7 @@ from scipy.sparse.csgraph import laplacian
 from .tools import inv_dict, nested_dict_add, priority_dict
 
 
-class Graph(object):
+class Graph:
     """The general `graph` class.
 
     A general graph class that supports adjacency, dictionary formats

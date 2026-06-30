@@ -3,14 +3,11 @@
 # Author: Ioannis Siglidis <y.siglidis@gmail.com>
 # License: BSD 3 clause
 from collections import Counter
+from collections.abc import Iterable
 from warnings import warn
 
 from numpy import array, einsum, squeeze, zeros
 from scipy.sparse import csr_matrix
-
-# Python 2/3 cross-compatibility import
-from six import iteritems, itervalues
-from six.moves.collections_abc import Iterable
 from sklearn.exceptions import NotFittedError
 from sklearn.utils.validation import check_is_fitted
 
@@ -37,7 +34,7 @@ class VertexHistogram(Kernel):
 
     def __init__(self, n_jobs=None, normalize=False, verbose=False, sparse="auto"):
         """Initialise a vertex histogram kernel."""
-        super(VertexHistogram, self).__init__(n_jobs=n_jobs, normalize=normalize, verbose=verbose)
+        super().__init__(n_jobs=n_jobs, normalize=normalize, verbose=verbose)
         self.sparse = sparse
         self._initialized.update({"sparse": True})
 
@@ -104,7 +101,7 @@ class VertexHistogram(Kernel):
                     )
 
                 # construct the data input for the numpy array
-                for label, frequency in iteritems(Counter(itervalues(L))):
+                for label, frequency in Counter(L.values()).items():
                     # for the row that corresponds to that graph
                     rows.append(ni)
 

@@ -386,14 +386,14 @@ def graph_from_pandas(edge_df, node_df=None, directed=False, as_Graph=False):
                     graphs[gidx]["edge_label"] = None
             if src not in graphs[gidx]["graph"]:
                 if throw_error:
-                    raise ValueError("This node didn't appear on node labels dataframe for graph " "with id " + str(gidx))
+                    raise ValueError("This node didn't appear on node labels dataframe for graph with id " + str(gidx))
                 else:
                     graphs[gidx]["graph"][src] = dict()
             graphs[gidx]["graph"][src][dst] = get_weight(row)
             if not directed:
                 if dst not in graphs[gidx]["graph"]:
                     if throw_error:
-                        raise ValueError("This node didn't appear on node labels dataframe " "for graph with id " + str(gidx))
+                        raise ValueError("This node didn't appear on node labels dataframe for graph with id " + str(gidx))
                     else:
                         graphs[gidx]["graph"][dst] = dict()
                 graphs[gidx]["graph"][dst][src] = get_weight(row)
@@ -478,7 +478,7 @@ def graph_from_csv(edge_files, node_files=None, index_type=str, directed=False, 
 
     def node_files_error():
         raise ValueError(
-            "node_files argument can be None or contain an iterable of strings" "of edge files and attributes_flag bool or None"
+            "node_files argument can be None or contain an iterable of stringsof edge files and attributes_flag bool or None"
         )
 
     if type(index_type) is not type:
@@ -530,7 +530,7 @@ def graph_from_csv(edge_files, node_files=None, index_type=str, directed=False, 
             for line in ef:
                 q = line.split(sep)
                 m = q[2:]
-                ea, eb = [index_type(e) for e in q[:2]]
+                ea, eb = (index_type(e) for e in q[:2])
                 g[ea][eb] = get_weight(m)
                 if not directed:
                     g[eb][ea] = g[ea][eb]
@@ -542,7 +542,7 @@ def graph_from_csv(edge_files, node_files=None, index_type=str, directed=False, 
             el = dict()
             for line in ef:
                 q = line.strip("\n").split(sep)
-                ea, eb = [index_type(e) for e in q[:2]]
+                ea, eb = (index_type(e) for e in q[:2])
                 m = q[2:]
                 g[ea][eb] = get_weight(m)
                 el[(ea, eb)] = np.array([float(num) for num in m])
@@ -557,7 +557,7 @@ def graph_from_csv(edge_files, node_files=None, index_type=str, directed=False, 
             el = dict()
             for line in ef:
                 q = line.strip("\n").split(sep)
-                ea, eb = [index_type(e) for e in q[:2]]
+                ea, eb = (index_type(e) for e in q[:2])
                 m = q[2:]
                 g[ea][eb] = get_weight(m)
                 el[(ea, eb)] = str(m[0])
@@ -570,7 +570,7 @@ def graph_from_csv(edge_files, node_files=None, index_type=str, directed=False, 
         for efa in efs:
             nl = None
             graph_object = defaultdict(dict)
-            with open(efa, "r") as ef:
+            with open(efa) as ef:
                 el = get_el(ef, graph_object)
             graph_object = dict(graph_object)
 
@@ -583,7 +583,7 @@ def graph_from_csv(edge_files, node_files=None, index_type=str, directed=False, 
             raise ValueError("The number of edge files and the number of node files must be the same")
         for nfa, efa in zip(nfs, efs):
             graph_object = dict()
-            with open(nfa, "r") as nf:
+            with open(nfa) as nf:
                 if node_files[1] is None:
                     nl = None
                     for line in nf:
@@ -601,7 +601,7 @@ def graph_from_csv(edge_files, node_files=None, index_type=str, directed=False, 
                         graph_object[index_type(q[0].strip())] = dict()
                         nl[index_type(q[0].strip())] = q[1]
 
-            with open(efa, "r") as ef:
+            with open(efa) as ef:
                 el = get_el(ef, graph_object)
 
             if as_Graph:

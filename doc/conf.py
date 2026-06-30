@@ -363,6 +363,4 @@ issues_github_path = "GraKeL/"
 issues_user_uri = "https://github.com/{user}"
 
 # The following is used by sphinx.ext.linkcode to provide links to github
-linkcode_resolve = make_linkcode_resolve(
-    "grakelx", "https://github.com/ysig/GraKeL" "/blob/{revision}/" "{package}/{path}#L{lineno}"
-)
+linkcode_resolve = make_linkcode_resolve("grakelx", "https://github.com/ysig/GraKeL/blob/{revision}/{package}/{path}#L{lineno}")

@@ -3,10 +3,8 @@
 # Author: Ioannis Siglidis <y.siglidis@gmail.com>
 # License: BSD 3 clause
 import warnings
+from collections.abc import Iterable
 
-# Python 2/3 cross-compatibility import
-from six import iteritems, itervalues
-from six.moves.collections_abc import Iterable
 from sklearn.utils import check_random_state
 from sklearn.utils.validation import check_is_fitted
 
@@ -52,7 +50,7 @@ class NeighborhoodHash(Kernel):
         bits=8,
     ):
         """Initialize a `neighborhood_hash` kernel."""
-        super(NeighborhoodHash, self).__init__(n_jobs=n_jobs, normalize=normalize, verbose=False)
+        super().__init__(n_jobs=n_jobs, normalize=normalize, verbose=False)
 
         self.random_state = random_state
         self.R = R
@@ -62,7 +60,7 @@ class NeighborhoodHash(Kernel):
 
     def initialize(self):
         """Initialize all transformer arguments, needing initialization."""
-        super(NeighborhoodHash, self).initialize()
+        super().initialize()
 
         if not self._initialized["random_state"]:
             self.random_state_ = check_random_state(self.random_state)
@@ -154,7 +152,7 @@ class NeighborhoodHash(Kernel):
                 g = (vertices, Labels, {n: x.neighbors(n, purpose="any") for n in vertices})
 
                 # collect all the labels
-                labels_hash_set |= set(itervalues(Labels))
+                labels_hash_set |= set(Labels.values())
                 gs.append(g)
                 i += 1
 
@@ -163,9 +161,7 @@ class NeighborhoodHash(Kernel):
 
             # Hash labels
             if len(labels_hash_set) > self._max_number:
-                warnings.warn(
-                    "Number of labels is smaller than" "the biggest possible.. " "Collisions will appear on the " "new labels."
-                )
+                warnings.warn("Number of labels is smaller thanthe biggest possible.. Collisions will appear on the new labels.")
 
                 # If labels exceed the biggest possible size
                 nl, nrl = list(), len(labels_hash_set)
@@ -184,7 +180,7 @@ class NeighborhoodHash(Kernel):
 
             # for all graphs
             for vertices, labels, neighbors in gs:
-                new_labels = {v: self._labels_hash_dict[l] for v, l in iteritems(labels)}
+                new_labels = {v: self._labels_hash_dict[l] for v, l in labels.items()}
                 g = (
                     vertices,
                     new_labels,
@@ -292,7 +288,7 @@ class NeighborhoodHash(Kernel):
                     )
 
                 # Hash based on the labels of fit
-                new_labels = {v: self._labels_hash_dict.get(l, None) for v, l in iteritems(Labels)}
+                new_labels = {v: self._labels_hash_dict.get(l, None) for v, l in Labels.items()}
 
                 # Radix sort the other
                 g = (vertices, new_labels) + ({n: x.neighbors(n, purpose="any") for n in vertices},)
