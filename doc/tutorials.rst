@@ -5,7 +5,7 @@ Tutorials
 Here is a list of available tutorials:
 
 
-`Digit Classification <https://nbviewer.jupyter.org/github/ysig/grakel/blob/0.1a7/tutorials/digit_classification/digit_classification.ipynb>`_
+`Digit Classification <https://nbviewer.jupyter.org/github/SneachChea/GraKelX/blob/main/tutorials/digit_classification/digit_classification.ipynb>`_
 ------------------------------------------------------------------------------------------------------------------------------------------------------
 This tutorial explores how an object recognition task can be formulated as a graph classification problem and solved using graph kernels.
 

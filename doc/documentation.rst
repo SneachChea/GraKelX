@@ -4,7 +4,7 @@
 Documentation
 =============
 
-In this section, we cover the core concepts in *GraKeL* and show how to use it.
+In this section, we cover the core concepts in *GraKeLX* and show how to use it.
 
   .. toctree::
     :maxdepth: 1
@@ -13,4 +13,5 @@ In this section, we cover the core concepts in *GraKeL* and show how to use it.
     documentation/introduction
     documentation/core_concepts
     documentation/creating_kernels
+    documentation/conversions
     documentation/contributing

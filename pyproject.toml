@@ -45,7 +45,7 @@ tutorials = ["matplotlib", "nltk", "networkx>=3,<4"]
 docs = ["sphinx", "sphinx-rtd-theme", "numpydoc", "sphinx-gallery", "sphinxcontrib-bibtex"]
 
 [project.urls]
-Documentation = "https://ysig.github.io/GraKeL/"
+Documentation = "https://SneachChea.github.io/GraKelX/"
 Homepage = "https://github.com/SneachChea/GraKelX"
 Repository = "https://github.com/SneachChea/GraKelX"
 "Source Code" = "https://github.com/SneachChea/GraKelX"

@@ -1,6 +1,6 @@
-======
-GraKeL
-======
+========
+GraKeLX
+========
 .. module:: grakelx
 
 The :code:`grakelx` module is structured as follows

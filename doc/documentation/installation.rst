@@ -1,9 +1,9 @@
 .. _installation:
 
-=================
-Installing GraKeL
-=================
-The GraKeL library requires the following packages to be installed:
+==================
+Installing GraKeLX
+==================
+The GraKeLX library requires the following packages to be installed:
 
 * Python (>=3.10)
 * NumPy (>=1.23.0)
@@ -12,7 +12,7 @@ The GraKeL library requires the following packages to be installed:
 * cvxopt (>=1.2.0) [optional]
 * future (>=0.16.0)
 
-*GraKeL* is available via `PyPI`_ . You can install the latest release of *GraKeL* using the following command:
+*GraKeLX* is available via `PyPI`_. You can install the latest release of *GraKeLX* using the following command:
 
 .. code-block:: bash
 
@@ -24,12 +24,17 @@ To also install the cvxopt package, which is a requirement of the Lovász-:math:
 
    $ pip install grakelx[lovasz]
 
-.. *GraKeL* is also available via `anaconda`_.
+Building GraKeLX
+----------------
 
-Building GraKeL
----------------
+In order to build your own version of *GraKeLX*, you need a C++ compiler since the package contains some C++ extensions. To build and install a local editable version of *GraKeLX* with `uv`_, execute:
 
-In order to build your own version of *GraKeL*, you need a C++ compiler since the package contains some C++ extensions. To build and install a local editable version of `GraKeL` with Poetry in your conda environment, execute :code:`poetry install --with dev,test` on the root folder, then compile extensions with :code:`poetry run python setup.py build_ext --inplace`. To build distributable artifacts, execute :code:`poetry build`.
+.. code-block:: bash
+
+   $ uv sync --group test
+   $ uv run python setup.py build_ext --inplace
+
+To build distributable artifacts, execute :code:`uv build`.
 
 In order for the C++ extensions to compile our extensions, a system-specific build environment should be configured. What you generally need is a C++ compiler and some python header files.
 
@@ -48,16 +53,16 @@ In the case of a Windows environment, you need to install parts of the Windows V
 
 .. note::
 
-   If you have trouble building `GraKeL`, please raise an issue_ so that we can enrich our installation instructions, as well as addressing the problem.
+   If you have trouble building *GraKeLX*, please raise an issue_ so that we can enrich our installation instructions, as well as addressing the problem.
 
 Why so Many Packages?
 ---------------------
 
-Graph kernels deal with the problem of graph comparison, a very challenging problem which has been studied for decades. Due to the complex nature of the problem, different types of approaches have been developed so far. Some approaches employ combinatorial algorithms, others formulate the graph comparison algorithm as a continuous optimization problem, while there are also other approaches that apply heuristics. The field of graph kernels is also characterized by such a large diversity of methods. For instance, the *graphlet kernel* solves the graph isomorphism problem to determine the identity of each graphet, while the *Lovász*-:math:`\vartheta` kernel solves a semidefinite programming problem to compute the Lovász number of each graph and the associated orthonormal representations. To solve such problems, *GraKeL* relies on well-established external libraries that provide optimized software that has been developed to address these problems. For example, *GraKeL* uses [bliss]_ to test graph isomorphism and the cvxopt_ library to optimize semidefinite programs.
+Graph kernels deal with the problem of graph comparison, a very challenging problem which has been studied for decades. Due to the complex nature of the problem, different types of approaches have been developed so far. Some approaches employ combinatorial algorithms, others formulate the graph comparison algorithm as a continuous optimization problem, while there are also other approaches that apply heuristics. The field of graph kernels is also characterized by such a large diversity of methods. For instance, the *graphlet kernel* solves the graph isomorphism problem to determine the identity of each graphet, while the *Lovász*-:math:`\vartheta` kernel solves a semidefinite programming problem to compute the Lovász number of each graph and the associated orthonormal representations. To solve such problems, *GraKeLX* relies on well-established external libraries that provide optimized software that has been developed to address these problems. For example, *GraKeLX* uses [bliss]_ to test graph isomorphism and the cvxopt_ library to optimize semidefinite programs.
 
 .. _cvxopt: https://cvxopt.org/
 
-.. [bliss] To test graph isomorphism, *GraKeL* extended `PyBliss`_, a Python wrapper for bliss. This allowed *GraKeL* to remain compatible with Python 2/3 and its installation on Windows. Among all the candidate packages, PyBliss was chosen thanks to the information shared by `Tamás Nepusz`_ (developer of the `iGraph`_ library), who pointed out that this package was the most efficient (both in terms of time and memory) for deciding isomorphism between small graphs in experiments conducted using the iGraph library. Other candidate packages include `pynauty`_ (a Python extension of `nauty`_) and `networkx`_ (contains an implementation of the `VF2`_ algorithm).
+.. [bliss] To test graph isomorphism, *GraKeLX* extended `PyBliss`_, a Python wrapper for bliss. This allowed *GraKeL* / *GraKeLX* to remain compatible with Python 2/3 and its installation on Windows. Among all the candidate packages, PyBliss was chosen thanks to the information shared by `Tamás Nepusz`_ (developer of the `iGraph`_ library), who pointed out that this package was the most efficient (both in terms of time and memory) for deciding isomorphism between small graphs in experiments conducted using the iGraph library. Other candidate packages include `pynauty`_ (a Python extension of `nauty`_) and `networkx`_ (contains an implementation of the `VF2`_ algorithm).
 
 .. _PyBliss: http://www.tcs.hut.fi/Software/bliss/
 .. _Tamás Nepusz: http://hal.elte.hu/~nepusz/
@@ -67,6 +72,6 @@ Graph kernels deal with the problem of graph comparison, a very challenging prob
 .. _networkx: https://networkx.github.io/
 .. _VF2: https://networkx.github.io/documentation/networkx-1.10/reference/algorithms.isomorphism.vf2.html
 .. _PyPI: https://pypi.org/project/grakelx/
-.. _anaconda: https://anaconda.org/ysig/grakel-dev
-.. _issue: https://github.com/ysig/GraKeL/issues
+.. _issue: https://github.com/SneachChea/GraKelX/issues
+.. _uv: https://docs.astral.sh/uv/
 .. _here: https://docs.microsoft.com/en-us/visualstudio/python/working-with-c-cpp-python-in-visual-studio?view=vs-2019#prerequisites

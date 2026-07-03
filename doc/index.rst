@@ -5,7 +5,9 @@
 Overview
 ========
 
-*GraKeL* is a Python package which provides implementations of several graph kernels, a family of powerful methods which allow kernel-based learning approaches such as SVMs to work directly on graphs.
+*GraKeLX* is a Python package which provides implementations of several graph kernels, a family of powerful methods which allow kernel-based learning approaches such as SVMs to work directly on graphs.
+
+*GraKeLX* is an independent fork of the original `GraKeL <https://github.com/ysig/GraKeL>`_ library, continuing development and maintenance under the **BSD 3-clause** license.
 
 Getting Started
 
@@ -18,7 +20,7 @@ Getting Started
 Benchmarks
 ==========
 
-To demonstrate the efficiency of the algorithms implemented in *GraKeL*, we present a comparison of the running times of the implementations of some graph kernels from *GraKeL* and from other packages. We also compare the running times of the different kernels to each other.
+To demonstrate the efficiency of the algorithms implemented in *GraKeLX*, we present a comparison of the running times of the implementations of some graph kernels from *GraKeLX* and from other packages. We also compare the running times of the different kernels to each other.
 
   .. toctree::
     :maxdepth: 2
@@ -29,9 +31,9 @@ To demonstrate the efficiency of the algorithms implemented in *GraKeL*, we pres
 Package Reference
 =================
 
-A collection of all classes and functions important for the use and understanding of the *GraKeL* package.
+A collection of all classes and functions important for the use and understanding of the *GraKeLX* package.
 
-GraKeL provides
+GraKeLX provides
 
   .. toctree::
     :maxdepth: 1
@@ -45,6 +47,13 @@ GraKeL provides
 ==========
 What's New
 ==========
+
+- Version **0.1.13**
+
+  + Forked as *GraKeLX*: continued maintenance, modernised CI (uv, Ruff), extended Python support to 3.13.
+  + Added :func:`networkx_from_graph`: convert GraKeL graphs to NetworkX graphs (round-trip with :func:`graph_from_networkx`).
+  + Added :func:`graph_from_torch_geometric`: load graphs from PyTorch Geometric data objects.
+  + Documentation updated and published at `SneachChea.github.io/GraKelX <https://SneachChea.github.io/GraKelX/>`_.
 
 - Version **0.1a8**
 
@@ -68,7 +77,7 @@ What's New
     3. Random number generator standardized `check_random_state`. `random_seed` are now `random_state` arguments.
     4. Doctests.
 
-  + Miscelanous: 
+  + Miscelanous:
 
     1. Detailed unsupported kernel output.
     2. More detailed licensing information considering **cvxopt** and **BLISS**
