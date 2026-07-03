@@ -1,0 +1,103 @@
+# Workflow to build and deploy the Sphinx documentation to GitHub Pages
+# ======================================================================
+# This workflow builds the documentation using Sphinx and publishes
+# the HTML output to the `gh-pages` branch, making it available at
+# https://SneachChea.github.io/GraKelX/
+#
+# Triggers:
+#   - push to `main` when doc/**, grakelx/**, pyproject.toml or README.md change
+#   - manual trigger via GitHub UI (workflow_dispatch)
+
+name: Documentation
+
+on:
+  workflow_dispatch:
+
+  push:
+    branches:
+      - main
+    paths:
+      - "doc/**"
+      - "grakelx/**"
+      - "pyproject.toml"
+      - "README.md"
+
+# Grant GITHUB_TOKEN the permissions to deploy to GitHub Pages
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+# Allow only one concurrent deployment — if a newer run is triggered,
+# cancel any in-progress builds.
+concurrency:
+  group: "pages"
+  cancel-in-progress: true
+
+env:
+  import-package-name: grakelx
+
+jobs:
+  build-deploy:
+    name: Build and Deploy Docs
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Python
+        uses: actions/setup-python@v6
+        with:
+          python-version: "3.13"
+
+      - name: Install uv
+        uses: astral-sh/setup-uv@v6
+        with:
+          enable-cache: true
+          cache-dependency-glob: "uv.lock"
+          cache-python: true
+
+      - name: Install ccache
+        run: sudo apt-get install -y ccache || brew install ccache
+        continue-on-error: true
+
+      - name: Restore ccache
+        uses: actions/cache@v5
+        with:
+          path: ~/.ccache
+          key: ccache-docs-${{ hashFiles('setup.py', 'grakelx/kernels/_c_functions/functions.pyx', 'grakelx/kernels/_c_functions/include/functions.hpp', 'grakelx/kernels/_c_functions/src/ArashPartov.cpp', 'grakelx/kernels/_c_functions/src/sm_core.cpp', 'grakelx/kernels/_isomorphism/bliss.pyx', 'grakelx/kernels/_isomorphism/intpyblissmodule_2.cc', 'grakelx/kernels/_isomorphism/intpyblissmodule_3.cc', 'grakelx/kernels/_isomorphism/bliss-0.50/**') }}
+          restore-keys: |
+            ccache-docs-
+
+      - name: Setup ccache symlinks
+        run: |
+          BIN_DIR="$RUNNER_TEMP/ccache_bin"
+          mkdir -p "$BIN_DIR"
+          if command -v ccache >/dev/null 2>&1; then
+            CCACHE_BIN=$(command -v ccache)
+            for cc in cc gcc g++ c++ clang clang++; do
+              ln -sf "$CCACHE_BIN" "$BIN_DIR/$cc"
+            done
+            echo "$BIN_DIR" >> "$GITHUB_PATH"
+          else
+            echo "ccache not found — skipping symlinks, build will proceed without caching"
+          fi
+
+      - name: Install dependencies (docs extras)
+        run: uv sync --extra docs --extra io --extra examples --extra tutorials
+
+      - name: Build Cython extensions
+        run: uv run python setup.py build_ext --inplace
+
+      - name: Build documentation with Sphinx
+        run: uv run sphinx-build -b html doc doc/_build/html
+
+      - name: Upload artifact
+        uses: actions/upload-pages-artifact@v3
+        with:
+          path: doc/_build/html
+
+      - name: Deploy to GitHub Pages
+        id: deployment
+        uses: actions/deploy-pages@v4

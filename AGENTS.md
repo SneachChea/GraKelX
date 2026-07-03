@@ -15,11 +15,13 @@ Cython is a build-time dependency (not optional). The extensions produce platfor
 ## Test
 
 Single command:
+
 ```bash
 uv run pytest
 ```
 
 Test files (7 files, ~3,100 LOC):
+
 - `tests/test_Kernel.py` — main kernel suite, one `def test_*` per kernel class (hand-written, not parametrized)
 - `tests/test_kernels.py` — eigenvalue (positive semi-definite) tests using real MUTAG/Cuneiform datasets
 - `tests/test_graph_kernels.py` — `GraphKernel` string-dispatcher wrapper tests
@@ -60,12 +62,45 @@ uv run ruff format .
 - `grakelx/kernels/_c_functions/` — Cython extension: `APHash`, `sm_kernel`, `ConSubg`, `k_to_ij_rectangular`, `k_to_ij_triangular`. Consumers: `kernel.py`, `subgraph_matching.py`, `neighborhood_subgraph_pairwise_distance.py`, `graphlet_sampling.py`.
 - `grakelx/kernels/_isomorphism/` — Cython wrapper around vendored BLISS 0.50 (graph automorphism, LGPL). Consumer: `graphlet_sampling.py` only.
 - `grakelx/datasets/` — TU-Dortmund dataset fetcher (~50 datasets hardcoded in `base.py`) + synthetic generator (`testing.py`).
-- `grakelx/utils/` — `KMTransformer`, `cross_validate_Kfold_SVM`, `graph_from_networkx`, `graph_from_pandas`, `graph_from_csv`, `graph_from_torch_geometric`.
+- `grakelx/utils/` — `KMTransformer`, `cross_validate_Kfold_SVM`, `graph_from_networkx`, `networkx_from_graph`, `graph_from_pandas`, `graph_from_csv`, `graph_from_torch_geometric`.
+
+## Documentation
+
+Built with Sphinx + sphinx-rtd-theme, sphinx-gallery, numpydoc, sphinxcontrib-bibtex.
+
+### Build locally
+
+```bash
+uv sync --extra docs --extra io --extra examples --extra tutorials
+uv run python setup.py build_ext --inplace   # Cython .so required before sphinx-build
+uv run sphinx-build -b html doc doc/_build/html
+```
+
+Open `doc/_build/html/index.html` in a browser.
+
+### Deploy to GitHub Pages
+
+A CI workflow (`.github/workflows/docs.yaml`) builds and deploys automatically:
+
+- **Trigger**: push to `main` when `doc/**`, `grakelx/**`, `pyproject.toml`, or `README.md` change; also `workflow_dispatch` (manual).
+- **How it works**: `uv sync --extra docs --extra io --extra examples --extra tutorials` → `build_ext --inplace` → `sphinx-build -b html` → `actions/upload-pages-artifact` → `actions/deploy-pages` (push to `gh-pages` branch).
+- **URL**: `https://SneachChea.github.io/GraKelX/`
+
+**To enable for the first time**: go to repo Settings → Pages → Source: **GitHub Actions**. No manual `gh-pages` branch needed.
+
+### Manual deploy (one-shot)
+
+```bash
+uv run sphinx-build -b html doc doc/_build/html
+npx gh-pages -d doc/_build/html
+```
+
+Requires the `gh-pages` npm package (or use `git worktree add`).
 
 ## Important Quirks
 
 - **Version**: `grakelx/__init__.py` now declares `__version__ = "0.1.12"`, matching `pyproject.toml`.
-- **Stale docs**: `doc/classes.rst` autosummary lists `MultiscaleLaplacianFast` — this class was removed after 0.1a8 and does not exist in source.
+- **Stale docs**: `doc/classes.rst` autosummary lists `MultiscaleLaplacianFast` — this class was removed after 0.1a8 and does not exist in source. The autosummary `kernel.rst` template also lists it as a stale reference.
 - **`.pyx` / `.pxd` files**: Python `ast` cannot parse them (`cdef`, `cpdef`, `cimport` syntax). Graphify and any AST-based tool will produce dangling import references for symbols defined in `_c_functions`/`_isomorphism`.
 - **Empty `__init__.pyx`**: `grakelx/kernels/_c_functions/__init__.pyx` is 0 bytes. This is a Cython build marker, not a package init. The package resolves via `functions.pyx`.
 - **Generated `.cpp` files**: `functions.cpp` (~1MB) and `bliss.cpp` (~970KB) are Cython-generated build artifacts, not hand-authored C++. `.gitignore` tracks only the linux-3.5 variant; the Mac darwin builds are checked in.

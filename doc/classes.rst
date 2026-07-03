@@ -4,7 +4,7 @@
 API Reference
 =============
 
-This is the class and function reference of *GraKeL*. In order for the user to understand how to use the package, we suggest he reads :ref:`documentation` section.
+This is the class and function reference of *GraKeLX*. In order for the user to understand how to use the package, we suggest he reads :ref:`documentation` section.
 
 :mod:`grakelx.graph`: Graph class with its utility functions
 ===========================================================
@@ -134,17 +134,19 @@ Cross Validation
 
    cross_validate_Kfold_SVM
 
-Load from other file formats
-----------------------------
+Load from / export to other file formats
+----------------------------------------
 
 .. autosummary::
    :toctree: generated/
    :template: function.rst
 
    graph_from_networkx
+   networkx_from_graph
    graph_from_pandas
    graph_from_csv
+   graph_from_torch_geometric
 
-**User guide:** Usefull functions for applying to existing datasets, of other formats.
+**User guide:** See the :ref:`conversions` section for detailed examples.
 
 .. _gd:	https://ls11-www.cs.tu-dortmund.de/staff/morris/graphkerneldatasets

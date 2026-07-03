@@ -59,6 +59,13 @@ extensions = [
     "xref",
 ]
 
+# BibTeX bibliography files used by sphinxcontrib-bibtex
+bibtex_bibfiles = [
+    "biblio.bib",
+    "kernels/graph_kernels.bib",
+    "benchmarks/benchmarks.bib",
+]
+
 # Add external links
 xref_links = {
     "lgscv": (
@@ -122,8 +129,8 @@ plot_gallery = "True"
 master_doc = "index"
 
 # General information about the project.
-project = "GraKeL"
-copyright = "2019, DaSciM (BSD License)"
+project = "GraKeLX"
+copyright = "2019-2026, DaSciM / Shaheen Acheche (BSD-3-Clause)"
 
 # The version info for the project you're documenting, acts as replacement for
 # |version| and |release|, also used in various other places throughout the
@@ -198,12 +205,12 @@ html_theme_path = [sphinx_rtd_theme.get_html_theme_path()]
 
 # The name of an image file (relative to this directory) to place at the top
 # of the sidebar.
-html_logo = "_figures/logo.svg"
+html_logo = "_figures/logo_grakelx.png"
 
 # The name of an image file (within the static path) to use as favicon of the
 # docs.  This file should be a Windows icon file (.ico) being 16x16 or 32x32
 # pixels large.
-# html_favicon = None
+html_favicon = "_figures/logo_grakelx.png"
 
 # Add any paths that contain custom static files (such as style sheets) here,
 # relative to this directory. They are copied after the builtin static files,
@@ -316,7 +323,15 @@ man_pages = [("index", "grakelx", "GraKeL Documentation", ["Yannis Siglidis"], 1
 # (source start file, target name, title, author,
 #  dir menu entry, description, category)
 texinfo_documents = [
-    ("index", "grakelx", "GraKeL Documentation", "Yannis Siglidis", "GraKeL", "A library for graph kernels.", "Machine-Learning"),
+    (
+        "index",
+        "grakelx",
+        "GraKeL Documentation",
+        "Yannis Siglidis",
+        "GraKeL",
+        "A library for graph kernels.",
+        "Machine-Learning",
+    ),
 ]
 
 
@@ -358,9 +373,11 @@ intersphinx_mapping = {
     "pynauty": ("https://web.cs.dal.ca/~peter/software/pynauty/html/", None),
 }
 
-issues_uri = "https://github.com/ysig/GraKeL/issues/{issue}"
-issues_github_path = "GraKeL/"
+issues_uri = "https://github.com/SneachChea/GraKelX/issues/{issue}"
+issues_github_path = "GraKelX/"
 issues_user_uri = "https://github.com/{user}"
 
 # The following is used by sphinx.ext.linkcode to provide links to github
-linkcode_resolve = make_linkcode_resolve("grakelx", "https://github.com/ysig/GraKeL/blob/{revision}/{package}/{path}#L{lineno}")
+linkcode_resolve = make_linkcode_resolve(
+    "grakelx", "https://github.com/SneachChea/GraKelX/blob/{revision}/{package}/{path}#L{lineno}"
+)

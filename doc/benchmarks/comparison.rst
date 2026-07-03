@@ -4,7 +4,7 @@
 Comparison with Other Packages
 ==============================
 
-We next compare the running times of *GraKeL* and the *graphkernels* library :cite:`sugiyama2017graphkernels`.
+We next compare the running times of *GraKeLX* (fork of *GraKeL*) and the *graphkernels* library :cite:`sugiyama2017graphkernels`.
 
 There are 6 common kernels in the two libraries: (1) the vertex histogram kernel (VH), (2) the edge histogram kernel (EH), (3) the geometric random walk kernel (GRW), (4) the shortest path kernel (SP), (5) the Weisfeiler-Lehman subtree kernel (WL), and (6) the graphlet kernel (GL). We compare the running time of the implementations of those kernels included in the two libraries on several real-world and synthetic datasets. It should be mentioned that the implementation of the graphlet kernel that is included in the *graphkernels* library crashed on all datasets (real-world and synthetic) except MUTAG. Hence, we report the running times of only the first 5 kernels.
 

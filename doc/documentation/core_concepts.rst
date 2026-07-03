@@ -4,7 +4,7 @@
 Core Concepts
 =============
 
-*GraKeL* is organized as shown in the Figure below.
+*GraKeLX* is organized as shown in the Figure below.
 
 .. figure:: ../_figures/grakel_schema.svg
   :scale: 100%
@@ -17,14 +17,14 @@ Specifically, the package consists of two subpackages:
 
 The :class:`grakelx.datasets` subpackage contains functions for automatically downloading graph datasets. On the other hand, the :class:`grakelx.kernels` subpackage contains the :class:`grakelx.Kernel` class, and the implementations of all graph kernels and frameworks. Note that all graph kernels and frameworks such as the :class:`grakelx.ShortestPath` kernel or the :class:`grakelx.WeisfeilerLehman` framework inherit from the :class:`grakelx.Kernel` class.
 
-GraKeL also contains the following two classes:
+GraKeLX also contains the following two classes:
 
 - :class:`grakelx.Graph`
 - :class:`grakelx.GraphKernel`
 
 The :class:`grakelx.Graph` class is used to represent graphs and also provides functions for manipulating them. The :class:`grakelx.GraphKernel` class is a generic wrapper. This class provides a uniform interface for all the implemented graph kernels and frameworks.
 
-We next present some core components of *GraKeL*.
+We next present some core components of *GraKeLX*.
 
 What is the :class:`grakelx.GraphKernel` Class?
 ----------------------------------------------
@@ -126,7 +126,7 @@ The :class:`grakelx.GraphKernel` class is a *generic wrapper class*. This class 
 * :code:`n_jobs` : Some kernels consist of operations that can be executed in parallel, leading to a reduction in the running time.
     The :code:`n_jobs` attribute has the same functionality as that of scikit-learn. It determines the number of jobs that will run in parallel. If :code:`n_jobs` is set equal to -1, all the processors will be utilized. Note that this attribute will not have an impact on the computation of some kernels whose code is not parallelized. These kernels either take advantage of the parallelization inherent in other libraries (e.g., NumPy) or their code is only partially parallelizable or not parallelizable at all. In such scenarios, a warning is issued.
 
-    If you are interested in parallelizing any of the implemented kernels, you can *contribute* to the *GraKeL* project. To find out how you can contribute, please have a look at :ref:`contributing`.
+    If you are interested in parallelizing any of the implemented kernels, you can *contribute* to the *GraKeLX* project. To find out how you can contribute, please have a look at :ref:`contributing`.
 
 * :code:`random_state` : This attribute is used for initializing the internal random number generator.
     It has no effect on deterministic graph kernels, but only on kernels that involve some random process (e.g., those that perform sampling). It also applies to the :code:`Nystroem` function of the :code:`GraphKernel` class which also performs sampling. If int, :code:`random_state` is the seed used by the random number generator. Otherwise, it can be a :code:`RandomState` instance. If :code:`None`, the random number generator is the :code:`RandomState` instance used by :code:`np.random`. The use of :code:`random_state` is illustrated in the following example.
@@ -219,7 +219,7 @@ All graph kernels inherit from this class.
 
 A graph kernel is a function :math:`k` between two graphs. That is, :math:`k \; : \; \mathcal{G} \times \mathcal{G} \rightarrow \mathbb{R}` where :math:`\mathcal{G}` is the space of graphs. We usually do not have just two graphs, but a large set of graphs, and we are interested to compare these graphs to each other using some kernel. In almost all cases, it is more computationally efficient to compute all the kernel values in one step than computing the kernel value for each pair individaully. Therefore, we designed our kernels to take sets of graphs as input instead of just two graphs.
 
-The *GraKeL* package had also to be compatible with *scikit-learn*. From the different scikit-learn structures, the one that fitted best to our setting was the :code:`TransformerMixin` class, which consists of the following three methods: :code:`fit`, :code:`fit_transform` and :code:`transform`. The three methods are designed to perform the following tasks in our package:
+The *GraKeLX* package had also to be compatible with *scikit-learn*. From the different scikit-learn structures, the one that fitted best to our setting was the :code:`TransformerMixin` class, which consists of the following three methods: :code:`fit`, :code:`fit_transform` and :code:`transform`. The three methods are designed to perform the following tasks in our package:
 
 - The :code:`fit` method extracts kernel dependent features from an input graph collection.
 
@@ -279,7 +279,7 @@ As we can see, the two matrices are indeed equal to each other.
 
 Why Not a More Advanced Graph Representation?
 ---------------------------------------------
-As already discussed, the graph objects in *GraKeL* are instances of the :class:`grakelx.Graph` class. The :class:`grakelx.Graph` class is very simple, and this may raise the question why *GraKeL* does not utilize the graph structures of well-established graph libraries such as `networkx`_ and `igraph`_. The answer is that the operations that most kernels perform on graphs are relatively simple and easily implementable. For instance, a kernel may need to retrieve the neighbors of a vertex or to compute the shortest paths between all pairs of nodes. Standard graph libraries provide many more functions, and they are specially designed such that all these functions are computed efficiently. Since *GraKeL* would only utilize a small fraction of these functions, introducing an extra dependency to some large library seemed not to be a good idea.
+As already discussed, the graph objects in *GraKeLX* are instances of the :class:`grakelx.Graph` class. The :class:`grakelx.Graph` class is very simple, and this may raise the question why *GraKeLX* does not utilize the graph structures of well-established graph libraries such as `networkx`_ and `igraph`_. The answer is that the operations that most kernels perform on graphs are relatively simple and easily implementable. For instance, a kernel may need to retrieve the neighbors of a vertex or to compute the shortest paths between all pairs of nodes. Standard graph libraries provide many more functions, and they are specially designed such that all these functions are computed efficiently. Since *GraKeLX* would only utilize a small fraction of these functions, introducing an extra dependency to some large library seemed not to be a good idea.
 
 We will again experiment with the two molecules: (1) water :math:`\mathbf{H}_{2}\mathbf{O}` and (2) hydronium :math:`\mathbf{H}_{3}\mathbf{O}^{+}`.
 
