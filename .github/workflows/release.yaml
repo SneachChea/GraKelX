@@ -54,7 +54,7 @@ jobs:
       # Let's us build aarch64 on linux
       - name: Set up QEMU
         if: runner.os == 'Linux'
-        uses: docker/setup-qemu-action@v3
+        uses: docker/setup-qemu-action@v4
         with:
           platforms: all
 
