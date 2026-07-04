@@ -61,7 +61,7 @@ jobs:
         if [[ "$RUNNER_OS" == "Windows" ]]; then choco install ccache; else sudo apt-get install -y ccache || brew install ccache; fi
       continue-on-error: true
     - name: Restore ccache
-      uses: actions/cache@v5
+      uses: actions/cache@v6
       with:
         path: ~/.ccache
         key: ccache-${{ runner.os }}-${{ matrix.py }}-${{ hashFiles('setup.py', 'grakelx/kernels/_c_functions/functions.pyx', 'grakelx/kernels/_c_functions/include/functions.hpp', 'grakelx/kernels/_c_functions/src/ArashPartov.cpp', 'grakelx/kernels/_c_functions/src/sm_core.cpp', 'grakelx/kernels/_isomorphism/bliss.pyx', 'grakelx/kernels/_isomorphism/intpyblissmodule_2.cc', 'grakelx/kernels/_isomorphism/intpyblissmodule_3.cc', 'grakelx/kernels/_isomorphism/bliss-0.50/**') }}
