@@ -72,7 +72,7 @@ jobs:
           # * Scipy has no wheels released for musllinux and will not build because OpenBLAS is not found
           CIBW_SKIP: "*-musllinux*"
 
-      - uses: actions/upload-artifact@v4
+      - uses: actions/upload-artifact@v7
         with:
           name: wheels-${{ matrix.os }}-${{ matrix.py }}
           path: ./wheelhouse/*.whl
@@ -129,7 +129,7 @@ jobs:
           cd /tmp && python -c "import grakelx; print(f'grakelx {grakelx.__version__} installed successfully')"
 
       - name: Store artifacts
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v7
         with:
           name: sdist
           path: dist/*.tar.gz
