@@ -45,18 +45,18 @@ default_eigvalue_precision = float("-1e-5")
 rs = np.random.RandomState(42)
 warnings.filterwarnings("ignore")
 
-cvxopt = True
+cvxopt_available = True
 try:
-    import cvxopt
+    import cvxopt  # noqa: F401
 except ImportError:
-    cvxopt = False
+    cvxopt_available = False
 
 
 def is_picklable(obj):
     try:
         pickle.dumps(obj)
-    except Exception as ex:
-        return False, ex
+    except Exception:
+        return False
     return True
 
 
@@ -322,24 +322,24 @@ def test_neighborhood_subgraph_pairwise_distance():
     assert is_picklable(gk)
 
 
-if cvxopt:
+@pytest.mark.cvxopt
+@pytest.mark.skipif(not cvxopt_available, reason="requires cvxopt")
+@pytest.mark.xfail(condition=is_windows, reason="See https://github.com/ysig/GraKeL/pull/83#issuecomment-1267069069")
+def test_lovasz_theta():
+    """Picklability test for the Lovasz-theta distance kernel."""
+    train, _ = generate_dataset(
+        n_graphs=50,
+        r_vertices=(5, 10),
+        r_connectivity=(0.4, 0.8),
+        r_weight_edges=(1, 1),
+        n_graphs_test=20,
+        random_state=rs,
+        features=None,
+    )
 
-    @pytest.mark.xfail(condition=is_windows, reason="See https://github.com/ysig/GraKeL/pull/83#issuecomment-1267069069")
-    def test_lovasz_theta():
-        """Picklability test for the Lovasz-theta distance kernel."""
-        train, _ = generate_dataset(
-            n_graphs=50,
-            r_vertices=(5, 10),
-            r_connectivity=(0.4, 0.8),
-            r_weight_edges=(1, 1),
-            n_graphs_test=20,
-            random_state=rs,
-            features=None,
-        )
-
-        lt_kernel = LovaszTheta(verbose=verbose, normalize=normalize)
-        lt_kernel.fit(train)
-        assert is_picklable(lt_kernel)
+    lt_kernel = LovaszTheta(verbose=verbose, normalize=normalize)
+    lt_kernel.fit(train)
+    assert is_picklable(lt_kernel)
 
 
 def test_svm_theta():
@@ -527,31 +527,3 @@ def test_core_framework():
     assert is_picklable(core_framework)
     gk.fit(train)
     assert is_picklable(gk)
-
-
-if __name__ == "__main__":
-    warnings.filterwarnings("once")
-    verbose = True
-
-    test_random_walk()
-    test_random_walk_labels()
-    test_shortest_path()
-    test_graphlet_sampling()
-    test_weisfeiler_lehman()
-    test_weisfeiler_lehman_optimal_assignment()
-    test_pyramid_match()
-    test_pyramid_match_no_labels()
-    test_neighborhood_hash()
-    test_subgraph_matching()
-    test_neighborhood_subgraph_pairwise_distance()
-    if cvxopt:
-        test_lovasz_theta()
-    test_svm_theta()
-    test_odd_sth()
-    test_propagation()
-    test_hadamard_code()
-    test_multiscale_laplacian()
-    test_vertex_histogram()
-    test_edge_histogram()
-    test_graph_hopper()
-    test_core_framework()

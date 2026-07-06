@@ -2,11 +2,12 @@
 
 # Author: Ioannis Siglidis <y.siglidis@gmail.com>
 # License: BSD 3 clause
-from __future__ import print_function
 
 import os
+import warnings
 from warnings import warn
 
+import pytest
 from numpy import arange
 from numpy.random import RandomState
 
@@ -25,42 +26,14 @@ from grakelx import (
 from grakelx.datasets import fetch_dataset
 from grakelx.datasets.base import read_data
 
-global verbose
-
-# Add extra arguments for allowing unit testing
-if __name__ == "__main__":
-    import argparse
-
-    parser = argparse.ArgumentParser(description="A test file for all `Graph` type objects")
-    parser.add_argument("--verbose", help="verbose outputs on stdout", action="store_true")
-    parser.add_argument(
-        "--ignore_warnings",
-        help="ignore warnings produced by kernel executions",
-        action="store_true",
-    )
-
-    args = parser.parse_args()
-    verbose = bool(args.verbose)
-
-    if bool(args.ignore_warnings):
-        import warnings
-
-        warnings.filterwarnings("ignore", category=UserWarning)
-else:
-    import warnings
-
-    warnings.filterwarnings("ignore", category=UserWarning)
-    verbose = False
+warnings.filterwarnings("ignore", category=UserWarning)
 
 
 def test_pandas():
     """Testing Graph object consistency for an adjacency-type initialization object."""
     # Input
 
-    try:
-        import pandas as pd
-    except ImportError:
-        return
+    pd = pytest.importorskip("pandas")
 
     ga = {
         0: {0: 1.0, 1: 1.0, 3: 3.0},
@@ -161,10 +134,7 @@ def test_pandas():
 def test_networkx():
     """Testing networkx conversion for an edge-dictionary-type initialization object."""
 
-    try:
-        import networkx as nx
-    except ImportError:
-        return
+    nx = pytest.importorskip("networkx")
 
     ga = {
         0: {0: 1.0, 1: 1.0, 3: 3.0},
@@ -205,10 +175,7 @@ def test_networkx():
 
 def test_networkx_simple():
     """Test graph_from_networkx on simple undirected graphs with no labels or weights."""
-    try:
-        import networkx as nx
-    except ImportError:
-        return
+    nx = pytest.importorskip("networkx")
 
     g1 = nx.Graph()
     g1.add_nodes_from([0, 1, 2])
@@ -231,10 +198,7 @@ def test_networkx_simple():
 
 def test_networkx_node_labeled():
     """Test graph_from_networkx on undirected graphs with node labels."""
-    try:
-        import networkx as nx
-    except ImportError:
-        return
+    nx = pytest.importorskip("networkx")
 
     g1 = nx.Graph()
     g1.add_nodes_from([0, 1, 2])
@@ -258,12 +222,9 @@ def test_networkx_node_labeled():
 
 def test_networkx_node_attributed():
     """Test graph_from_networkx on undirected graphs with numpy array node attributes."""
-    try:
-        import networkx as nx
-    except ImportError:
-        return
-
     import numpy as np
+
+    nx = pytest.importorskip("networkx")
 
     g1 = nx.Graph()
     g1.add_nodes_from([0, 1, 2])
@@ -295,10 +256,7 @@ def test_networkx_node_attributed():
 
 def test_networkx_from_graph_simple():
     """Test networkx_from_graph on simple undirected graphs with no labels or weights."""
-    try:
-        import networkx as nx
-    except ImportError:
-        return
+    nx = pytest.importorskip("networkx")
 
     ga = {0: {1: 1.0, 2: 1.0}, 1: {0: 1.0, 2: 1.0}, 2: {0: 1.0, 1: 1.0}}
     gb = {4: {5: 1.0, 7: 1.0}, 5: {4: 1.0, 7: 1.0}, 7: {4: 1.0, 5: 1.0}}
@@ -317,10 +275,7 @@ def test_networkx_from_graph_simple():
 
 def test_networkx_from_graph_node_labeled():
     """Test networkx_from_graph writes node labels under the configured tag."""
-    try:
-        import networkx as nx
-    except ImportError:
-        return
+    nx = pytest.importorskip("networkx")
 
     ga = {0: {1: 1.0}, 1: {0: 1.0}, 2: {3: 1.0}, 3: {2: 1.0}}
     nl = {0: "a", 1: "b", 2: "a", 3: "b"}
@@ -335,10 +290,7 @@ def test_networkx_from_graph_node_labeled():
 
 def test_networkx_from_graph_edge_labeled():
     """Test networkx_from_graph writes edge labels under the configured tag."""
-    try:
-        import networkx as nx
-    except ImportError:
-        return
+    nx = pytest.importorskip("networkx")
 
     ga = {0: {1: 1.0, 2: 1.0}, 1: {0: 1.0, 2: 1.0}, 2: {0: 1.0, 1: 1.0}}
     el = {(0, 1): "el01", (1, 2): "el12", (0, 2): "el02"}
@@ -354,10 +306,7 @@ def test_networkx_from_graph_edge_labeled():
 
 def test_networkx_from_graph_weighted():
     """Test networkx_from_graph writes weights under the 'weight' tag by default."""
-    try:
-        import networkx as nx
-    except ImportError:
-        return
+    nx = pytest.importorskip("networkx")
 
     ga = {0: {1: 2.5, 2: 3.0}, 1: {0: 2.5, 2: 1.5}, 2: {0: 3.0, 1: 1.5}}
     g = Graph(ga)
@@ -376,10 +325,7 @@ def test_networkx_from_graph_weighted():
 
 def test_networkx_from_graph_roundtrip():
     """Test nx -> grakel -> nx conversion preserves edges, labels and weights."""
-    try:
-        import networkx as nx
-    except ImportError:
-        return
+    nx = pytest.importorskip("networkx")
 
     g_nx = nx.Graph()
     g_nx.add_nodes_from([0, 1, 2, 3])
@@ -413,10 +359,7 @@ def test_networkx_from_graph_roundtrip():
 
 def test_networkx_from_graph_create_using():
     """Test networkx_from_graph respects the create_using class."""
-    try:
-        import networkx as nx
-    except ImportError:
-        return
+    nx = pytest.importorskip("networkx")
 
     ga = {0: {1: 1.0, 2: 1.0}, 1: {0: 1.0, 2: 1.0}, 2: {0: 1.0, 1: 1.0}}
     g = Graph(ga)
@@ -486,7 +429,7 @@ def test_KM_Kfold():
 
     def load_mutag():
         try:
-            dataset = fetch_dataset("MUTAG", with_classes=True, verbose=verbose)
+            dataset = fetch_dataset("MUTAG", with_classes=True, verbose=False)
         except Exception:
             # Offline testing
             warn("MUTAG could not be downloaded: using an offline version..")
@@ -514,7 +457,7 @@ def test_KM_Kfold():
     scoring = "accuracy"
 
     # Execute Kfold
-    cross_validate_Kfold_SVM(
+    result = cross_validate_Kfold_SVM(
         K,
         y,
         n_iter=n_iter,
@@ -525,17 +468,20 @@ def test_KM_Kfold():
         fold_reduce=None,
     )
 
+    assert isinstance(result, list) and len(result) == 2
+    for scores in result:
+        assert all(s > 0 for s in scores)
+
 
 def test_torch_geometric():
     """Testing Graph object consistency for a torch geometric initialization object."""
     import numpy as np
 
-    try:
-        import torch
-        from torch_geometric.data import Data
-        from torch_geometric.loader import DataLoader
-    except ImportError:
-        return
+    torch = pytest.importorskip("torch")
+    tg_data = pytest.importorskip("torch_geometric.data")
+    tg_loader = pytest.importorskip("torch_geometric.loader")
+    Data = tg_data.Data
+    DataLoader = tg_loader.DataLoader
 
     # Single graph
     edge_index = torch.tensor([[0, 1, 1, 2], [1, 0, 2, 1]], dtype=torch.long)
@@ -621,11 +567,3 @@ def test_torch_geometric():
     edge_attr_f = torch.norm(g2.edge_attr - edge_attr).item() == 0.0
 
     assert label_f and edge_f and node_f and edge_attr_f
-
-
-if __name__ == "__main__":
-    test_pandas()
-    test_networkx()
-    test_csv()
-    test_KM_Kfold()
-    test_torch_geometric()

@@ -42,11 +42,22 @@ default_eigvalue_precision = float("-1e-5")
 rs = np.random.RandomState(42)
 warnings.filterwarnings("ignore")
 
-cvxopt = True
+cvxopt_available = True
 try:
-    import cvxopt
+    import cvxopt  # noqa: F401
 except ImportError:
-    cvxopt = False
+    cvxopt_available = False
+
+
+def assert_valid_kernel_matrix(kernel, train, test=None):
+    """Assert that kernel produces valid output: correct shapes, symmetric train matrix."""
+    K_train = kernel.fit_transform(train)
+    assert K_train.shape == (len(train), len(train)), f"Train shape {K_train.shape} != ({len(train)}, {len(train)})"
+    assert np.allclose(K_train, K_train.T, atol=1e-10), "Train kernel matrix is not symmetric"
+
+    if test is not None:
+        K_test = kernel.transform(test)
+        assert K_test.shape == (len(test), len(train)), f"Test shape {K_test.shape} != ({len(test)}, {len(train)})"
 
 
 def test_random_walk():
@@ -62,12 +73,8 @@ def test_random_walk():
     )
 
     rw_kernel = RandomWalk(verbose=verbose, normalize=normalize)
-    try:
-        rw_kernel.fit_transform(train)
-        rw_kernel.transform(test)
-        assert True
-    except Exception as exception:
-        assert False, exception
+    rw_kernel.fit_transform(train)
+    rw_kernel.transform(test)
 
 
 def test_random_walk_pd():
@@ -84,12 +91,8 @@ def test_random_walk_pd():
 
     gk = GraphKernel(kernel="RW", verbose=verbose, normalize=normalize, n_jobs=-1)
 
-    try:
-        gk.fit_transform(train)
-        gk.transform(test)
-        assert True
-    except Exception as exception:
-        assert False, exception
+    gk.fit_transform(train)
+    gk.transform(test)
 
 
 def test_random_walk_labels():
@@ -106,12 +109,8 @@ def test_random_walk_labels():
 
     rw_kernel = RandomWalkLabeled(verbose=verbose, normalize=normalize)
 
-    try:
-        rw_kernel.fit_transform(train)
-        rw_kernel.transform(test)
-        assert True
-    except Exception as exception:
-        assert False, exception
+    rw_kernel.fit_transform(train)
+    rw_kernel.transform(test)
 
 
 def test_random_walk_labels_pd():
@@ -132,12 +131,8 @@ def test_random_walk_labels_pd():
         normalize=normalize,
     )
 
-    try:
-        gk.fit_transform(train)
-        gk.transform(test)
-        assert True
-    except Exception as exception:
-        assert False, exception
+    gk.fit_transform(train)
+    gk.transform(test)
 
 
 def test_shortest_path():
@@ -154,12 +149,8 @@ def test_shortest_path():
 
     sp_kernel = ShortestPath(verbose=verbose, normalize=normalize)
 
-    try:
-        sp_kernel.fit_transform(train)
-        sp_kernel.transform(test)
-        assert True
-    except Exception as exception:
-        assert False, exception
+    sp_kernel.fit_transform(train)
+    sp_kernel.transform(test)
 
     train, test = generate_dataset(
         n_graphs=50,
@@ -173,12 +164,8 @@ def test_shortest_path():
 
     sp_kernel = ShortestPathAttr(verbose=verbose, normalize=normalize)
 
-    try:
-        sp_kernel.fit_transform(train)
-        sp_kernel.transform(test)
-        assert True
-    except Exception as exception:
-        assert False, exception
+    sp_kernel.fit_transform(train)
+    sp_kernel.transform(test)
 
 
 def test_shortest_path_pd():
@@ -195,12 +182,8 @@ def test_shortest_path_pd():
 
     gk = GraphKernel(kernel="SP", verbose=verbose, normalize=normalize)
 
-    try:
-        gk.fit_transform(train)
-        gk.transform(test)
-        assert True
-    except Exception as exception:
-        assert False, exception
+    gk.fit_transform(train)
+    gk.transform(test)
 
     train, test = generate_dataset(
         n_graphs=50,
@@ -219,12 +202,8 @@ def test_shortest_path_pd():
         n_jobs=-1,
     )
 
-    try:
-        gk.fit_transform(train)
-        gk.transform(test)
-        assert True
-    except Exception as exception:
-        assert False, exception
+    gk.fit_transform(train)
+    gk.transform(test)
 
 
 def test_graphlet_sampling():
@@ -242,14 +221,10 @@ def test_graphlet_sampling():
     gs_kernel = GraphletSampling(verbose=verbose, normalize=normalize, sampling=dict(n_samples=50))
     gk = GraphKernel(kernel={"name": "GR", "sampling": {"n_samples": 50}}, verbose=verbose, normalize=normalize)
 
-    try:
-        gs_kernel.fit_transform(train)
-        gs_kernel.transform(test)
-        gk.fit_transform(train)
-        gk.transform(test)
-        assert True
-    except Exception as exception:
-        assert False, exception
+    gs_kernel.fit_transform(train)
+    gs_kernel.transform(test)
+    gk.fit_transform(train)
+    gk.transform(test)
 
 
 def test_weisfeiler_lehman():
@@ -266,12 +241,8 @@ def test_weisfeiler_lehman():
 
     wl_st_kernel = WeisfeilerLehman(verbose=verbose, normalize=normalize, base_graph_kernel=VertexHistogram)
 
-    try:
-        wl_st_kernel.fit_transform(train)
-        wl_st_kernel.transform(test)
-        assert True
-    except Exception as exception:
-        assert False, exception
+    wl_st_kernel.fit_transform(train)
+    wl_st_kernel.transform(test)
 
 
 def test_weisfeiler_lehman_optimal_assignment():
@@ -288,12 +259,8 @@ def test_weisfeiler_lehman_optimal_assignment():
 
     wl_oa_kernel = WeisfeilerLehmanOptimalAssignment(verbose=verbose, normalize=normalize)
 
-    try:
-        wl_oa_kernel.fit_transform(train)
-        wl_oa_kernel.transform(test)
-        assert True
-    except Exception as exception:
-        assert False, exception
+    wl_oa_kernel.fit_transform(train)
+    wl_oa_kernel.transform(test)
 
 
 def test_weisfeiler_lehman_pd():
@@ -310,12 +277,8 @@ def test_weisfeiler_lehman_pd():
 
     gk = GraphKernel(kernel="WL", verbose=verbose, normalize=normalize)
 
-    try:
-        gk.fit_transform(train)
-        gk.transform(test)
-        assert True
-    except Exception as exception:
-        assert False, exception
+    gk.fit_transform(train)
+    gk.transform(test)
 
 
 def test_pyramid_match():
@@ -333,14 +296,10 @@ def test_pyramid_match():
     pm_kernel = PyramidMatch(verbose=verbose, normalize=normalize)
     gk = GraphKernel("PM", verbose=verbose, normalize=normalize)
 
-    try:
-        pm_kernel.fit_transform(train)
-        pm_kernel.transform(test)
-        gk.fit_transform(train)
-        gk.transform(test)
-        assert True
-    except Exception as exception:
-        assert False, exception
+    pm_kernel.fit_transform(train)
+    pm_kernel.transform(test)
+    gk.fit_transform(train)
+    gk.transform(test)
 
 
 def test_pyramid_match_no_labels():
@@ -358,14 +317,10 @@ def test_pyramid_match_no_labels():
     pm_kernel = PyramidMatch(verbose=verbose, normalize=normalize, with_labels=False)
     gk = GraphKernel(kernel={"name": "PM", "with_labels": False}, verbose=verbose, normalize=normalize)
 
-    try:
-        pm_kernel.fit_transform(train)
-        pm_kernel.transform(test)
-        gk.fit_transform(train)
-        gk.transform(test)
-        assert True
-    except Exception as exception:
-        assert False, exception
+    pm_kernel.fit_transform(train)
+    pm_kernel.transform(test)
+    gk.fit_transform(train)
+    gk.transform(test)
 
 
 def test_neighborhood_hash():
@@ -382,12 +337,8 @@ def test_neighborhood_hash():
 
     nh_kernel = NeighborhoodHash(verbose=verbose, normalize=normalize)
 
-    try:
-        nh_kernel.fit_transform(train)
-        nh_kernel.transform(test)
-        assert True
-    except Exception as exception:
-        assert False, exception
+    nh_kernel.fit_transform(train)
+    nh_kernel.transform(test)
 
 
 def test_neighborhood_hash_pd():
@@ -404,12 +355,8 @@ def test_neighborhood_hash_pd():
 
     gk = GraphKernel(kernel="NH", verbose=verbose, normalize=normalize, n_jobs=-1)
 
-    try:
-        gk.fit_transform(train)
-        gk.transform(test)
-        assert True
-    except Exception as exception:
-        assert False, exception
+    gk.fit_transform(train)
+    gk.transform(test)
 
 
 def test_subgraph_matching():
@@ -427,12 +374,8 @@ def test_subgraph_matching():
 
     sm_kernel = SubgraphMatching(verbose=verbose, normalize=normalize)
 
-    try:
-        sm_kernel.fit_transform(train)
-        sm_kernel.transform(test)
-        assert True
-    except Exception as exception:
-        assert False, exception
+    sm_kernel.fit_transform(train)
+    sm_kernel.transform(test)
 
     # node-label/edge-attribute
     train, test = generate_dataset(
@@ -447,12 +390,8 @@ def test_subgraph_matching():
 
     sm_kernel = SubgraphMatching(verbose=verbose, normalize=normalize, ke=np.dot)
 
-    try:
-        sm_kernel.fit_transform(train)
-        sm_kernel.transform(test)
-        assert True
-    except Exception as exception:
-        assert False, exception
+    sm_kernel.fit_transform(train)
+    sm_kernel.transform(test)
 
     # node-attribute/edge-label
     train, test = generate_dataset(
@@ -467,12 +406,8 @@ def test_subgraph_matching():
 
     sm_kernel = SubgraphMatching(verbose=verbose, normalize=normalize, kv=np.dot)
 
-    try:
-        sm_kernel.fit_transform(train)
-        sm_kernel.transform(test)
-        assert True
-    except Exception as exception:
-        assert False, exception
+    sm_kernel.fit_transform(train)
+    sm_kernel.transform(test)
 
     # node-attribute/edge-attribute
     train, test = generate_dataset(
@@ -487,12 +422,8 @@ def test_subgraph_matching():
 
     sm_kernel = SubgraphMatching(verbose=verbose, normalize=normalize, ke=np.dot, kv=np.dot)
 
-    try:
-        sm_kernel.fit_transform(train)
-        sm_kernel.transform(test)
-        assert True
-    except Exception as exception:
-        assert False, exception
+    sm_kernel.fit_transform(train)
+    sm_kernel.transform(test)
 
 
 def test_subgraph_matching_pd():
@@ -510,12 +441,8 @@ def test_subgraph_matching_pd():
 
     gk = GraphKernel(kernel={"name": "SM"}, verbose=verbose, normalize=normalize, n_jobs=-1)
 
-    try:
-        gk.fit_transform(train)
-        gk.transform(test)
-        assert True
-    except Exception as exception:
-        assert False, exception
+    gk.fit_transform(train)
+    gk.transform(test)
 
     # node-label/edge-attribute
     train, test = generate_dataset(
@@ -530,12 +457,8 @@ def test_subgraph_matching_pd():
 
     gk = GraphKernel(kernel={"name": "SM", "ke": np.dot}, verbose=verbose, normalize=normalize, n_jobs=-1)
 
-    try:
-        gk.fit_transform(train)
-        gk.transform(test)
-        assert True
-    except Exception as exception:
-        assert False, exception
+    gk.fit_transform(train)
+    gk.transform(test)
 
     # node-attribute/edge-label
     train, test = generate_dataset(
@@ -550,12 +473,8 @@ def test_subgraph_matching_pd():
 
     gk = GraphKernel(kernel={"name": "SM", "kv": np.dot}, verbose=verbose, normalize=normalize, n_jobs=-1)
 
-    try:
-        gk.fit_transform(train)
-        gk.transform(test)
-        assert True
-    except Exception as exception:
-        assert False, exception
+    gk.fit_transform(train)
+    gk.transform(test)
 
     # node-attribute/edge-attribute
     train, test = generate_dataset(
@@ -575,12 +494,8 @@ def test_subgraph_matching_pd():
         n_jobs=-1,
     )
 
-    try:
-        gk.fit_transform(train)
-        gk.transform(test)
-        assert True
-    except Exception as exception:
-        assert False, exception
+    gk.fit_transform(train)
+    gk.transform(test)
 
 
 def test_neighborhood_subgraph_pairwise_distance():
@@ -598,67 +513,58 @@ def test_neighborhood_subgraph_pairwise_distance():
     nspd_kernel = NeighborhoodSubgraphPairwiseDistance(verbose=verbose, normalize=normalize)
     gk = GraphKernel(kernel="NSPD", verbose=verbose, normalize=normalize)
 
-    try:
-        nspd_kernel.fit_transform(train)
-        nspd_kernel.transform(test)
-        gk.fit_transform(train)
-        gk.transform(test)
-        assert True
-    except Exception as exception:
-        assert False, exception
+    nspd_kernel.fit_transform(train)
+    nspd_kernel.transform(test)
+    gk.fit_transform(train)
+    gk.transform(test)
 
 
-if cvxopt:
-
-    @pytest.mark.xfail(
-        condition=is_windows,
-        reason="See https://github.com/ysig/GraKeL/pull/83#issuecomment-1267069069",
+@pytest.mark.cvxopt
+@pytest.mark.skipif(not cvxopt_available, reason="requires cvxopt")
+@pytest.mark.xfail(
+    condition=is_windows,
+    reason="See https://github.com/ysig/GraKeL/pull/83#issuecomment-1267069069",
+)
+def test_lovasz_theta():
+    """Random input test for the Lovasz-theta distance kernel."""
+    train, test = generate_dataset(
+        n_graphs=50,
+        r_vertices=(5, 10),
+        r_connectivity=(0.4, 0.8),
+        r_weight_edges=(1, 1),
+        n_graphs_test=20,
+        random_state=rs,
+        features=None,
     )
-    def test_lovasz_theta():
-        """Random input test for the Lovasz-theta distance kernel."""
-        train, test = generate_dataset(
-            n_graphs=50,
-            r_vertices=(5, 10),
-            r_connectivity=(0.4, 0.8),
-            r_weight_edges=(1, 1),
-            n_graphs_test=20,
-            random_state=rs,
-            features=None,
-        )
 
-        lt_kernel = LovaszTheta(verbose=verbose, normalize=normalize)
+    lt_kernel = LovaszTheta(verbose=verbose, normalize=normalize)
 
-        try:
-            lt_kernel.fit_transform(train)
-            lt_kernel.transform(test)
-            assert True
-        except Exception as exception:
-            assert False, exception
+    lt_kernel.fit_transform(train)
+    lt_kernel.transform(test)
 
-    @pytest.mark.xfail(
-        condition=is_windows,
-        reason="See https://github.com/ysig/GraKeL/pull/83#issuecomment-1267069069",
+
+@pytest.mark.cvxopt
+@pytest.mark.skipif(not cvxopt_available, reason="requires cvxopt")
+@pytest.mark.xfail(
+    condition=is_windows,
+    reason="See https://github.com/ysig/GraKeL/pull/83#issuecomment-1267069069",
+)
+def test_lovasz_theta_pd():
+    """Random input test for the Lovasz-theta distance kernel [n_jobs=-1/generic-wrapper]."""
+    train, test = generate_dataset(
+        n_graphs=50,
+        r_vertices=(5, 10),
+        r_connectivity=(0.4, 0.8),
+        r_weight_edges=(1, 1),
+        n_graphs_test=20,
+        random_state=rs,
+        features=None,
     )
-    def test_lovasz_theta_pd():
-        """Random input test for the Lovasz-theta distance kernel [n_jobs=-1/generic-wrapper]."""
-        train, test = generate_dataset(
-            n_graphs=50,
-            r_vertices=(5, 10),
-            r_connectivity=(0.4, 0.8),
-            r_weight_edges=(1, 1),
-            n_graphs_test=20,
-            random_state=rs,
-            features=None,
-        )
 
-        gk = GraphKernel(kernel="lovasz_theta", verbose=verbose, normalize=normalize, n_jobs=-1)
+    gk = GraphKernel(kernel="lovasz_theta", verbose=verbose, normalize=normalize, n_jobs=-1)
 
-        try:
-            gk.fit_transform(train)
-            gk.transform(test)
-            assert True
-        except Exception as exception:
-            assert False, exception
+    gk.fit_transform(train)
+    gk.transform(test)
 
 
 def test_svm_theta():
@@ -675,12 +581,8 @@ def test_svm_theta():
 
     svm_kernel = SvmTheta(verbose=verbose, normalize=normalize)
 
-    try:
-        svm_kernel.fit_transform(train)
-        svm_kernel.transform(test)
-        assert True
-    except Exception as exception:
-        assert False, exception
+    svm_kernel.fit_transform(train)
+    svm_kernel.transform(test)
 
 
 def test_svm_theta_pd():
@@ -697,12 +599,8 @@ def test_svm_theta_pd():
 
     gk = GraphKernel(kernel="svm_theta", verbose=verbose, normalize=normalize)
 
-    try:
-        gk.fit_transform(train)
-        gk.transform(test)
-        assert True
-    except Exception as exception:
-        assert False, exception
+    gk.fit_transform(train)
+    gk.transform(test)
 
 
 def test_odd_sth():
@@ -720,14 +618,10 @@ def test_odd_sth():
     odd_sth_kernel = OddSth(verbose=verbose, normalize=normalize)
     gk = GraphKernel(kernel="ODD", verbose=verbose, normalize=normalize)
 
-    try:
-        odd_sth_kernel.fit_transform(train)
-        odd_sth_kernel.transform(test)
-        gk.fit_transform(train)
-        gk.transform(test)
-        assert True
-    except Exception as exception:
-        assert False, exception
+    odd_sth_kernel.fit_transform(train)
+    odd_sth_kernel.transform(test)
+    gk.fit_transform(train)
+    gk.transform(test)
 
 
 def test_propagation():
@@ -744,12 +638,8 @@ def test_propagation():
 
     propagation_kernel = Propagation(verbose=verbose, normalize=normalize)
 
-    try:
-        propagation_kernel.fit_transform(train)
-        propagation_kernel.transform(test)
-        assert True
-    except Exception as exception:
-        assert False, exception
+    propagation_kernel.fit_transform(train)
+    propagation_kernel.transform(test)
 
     train, test = generate_dataset(
         n_graphs=100,
@@ -763,12 +653,8 @@ def test_propagation():
 
     propagation_kernel_attr = PropagationAttr(verbose=verbose, normalize=normalize)
 
-    try:
-        propagation_kernel_attr.fit_transform(train)
-        propagation_kernel_attr.transform(test)
-        assert True
-    except Exception as exception:
-        assert False, exception
+    propagation_kernel_attr.fit_transform(train)
+    propagation_kernel_attr.transform(test)
 
 
 def test_propagation_pd():
@@ -785,12 +671,8 @@ def test_propagation_pd():
 
     gk = GraphKernel(kernel="PR", verbose=verbose, normalize=normalize, n_jobs=-1)
 
-    try:
-        gk.fit_transform(train)
-        gk.transform(test)
-        assert True
-    except Exception as exception:
-        assert False, exception
+    gk.fit_transform(train)
+    gk.transform(test)
 
     train, test = generate_dataset(
         n_graphs=100,
@@ -809,12 +691,8 @@ def test_propagation_pd():
         n_jobs=-1,
     )
 
-    try:
-        gk.fit_transform(train)
-        gk.transform(test)
-        assert True
-    except Exception as exception:
-        assert False, exception
+    gk.fit_transform(train)
+    gk.transform(test)
 
 
 def test_hadamard_code():
@@ -831,12 +709,8 @@ def test_hadamard_code():
 
     hadamard_code_kernel = HadamardCode(verbose=verbose, normalize=normalize, base_graph_kernel=VertexHistogram)
 
-    try:
-        hadamard_code_kernel.fit_transform(train)
-        hadamard_code_kernel.transform(test)
-        assert True
-    except Exception as exception:
-        assert False, exception
+    hadamard_code_kernel.fit_transform(train)
+    hadamard_code_kernel.transform(test)
 
 
 def test_hadamard_code_pd():
@@ -853,12 +727,8 @@ def test_hadamard_code_pd():
 
     gk = GraphKernel(kernel="HC", verbose=verbose, normalize=normalize, n_jobs=-1)
 
-    try:
-        gk.fit_transform(train)
-        gk.transform(test)
-        assert True
-    except Exception as exception:
-        assert False, exception
+    gk.fit_transform(train)
+    gk.transform(test)
 
 
 def test_multiscale_laplacian():
@@ -876,12 +746,8 @@ def test_multiscale_laplacian():
 
     mlf_kernel = MultiscaleLaplacian(verbose=verbose, normalize=normalize)
 
-    try:
-        mlf_kernel.fit_transform(train)
-        mlf_kernel.transform(test)
-        assert True
-    except Exception as exception:
-        assert False, exception
+    mlf_kernel.fit_transform(train)
+    mlf_kernel.transform(test)
 
 
 def test_multiscale_laplacian_pd():
@@ -899,12 +765,8 @@ def test_multiscale_laplacian_pd():
 
     gk = GraphKernel(kernel="ML", verbose=verbose, normalize=normalize, n_jobs=-1)
 
-    try:
-        gk.fit_transform(train)
-        gk.transform(test)
-        assert True
-    except Exception as exception:
-        assert False, exception
+    gk.fit_transform(train)
+    gk.transform(test)
 
 
 def test_vertex_histogram():
@@ -922,14 +784,10 @@ def test_vertex_histogram():
     vh_kernel = VertexHistogram(verbose=verbose, normalize=normalize)
     gk = GraphKernel(kernel="VH", verbose=verbose, normalize=normalize)
 
-    try:
-        vh_kernel.fit_transform(train)
-        vh_kernel.transform(test)
-        gk.fit_transform(train)
-        gk.transform(test)
-        assert True
-    except Exception as exception:
-        assert False, exception
+    vh_kernel.fit_transform(train)
+    vh_kernel.transform(test)
+    gk.fit_transform(train)
+    gk.transform(test)
 
 
 def test_edge_histogram():
@@ -947,14 +805,10 @@ def test_edge_histogram():
     eh_kernel = EdgeHistogram(verbose=verbose, normalize=normalize)
     gk = GraphKernel(kernel="EH", verbose=verbose, normalize=normalize)
 
-    try:
-        eh_kernel.fit_transform(train)
-        eh_kernel.transform(test)
-        gk.fit_transform(train)
-        gk.transform(test)
-        assert True
-    except Exception as exception:
-        assert False, exception
+    eh_kernel.fit_transform(train)
+    eh_kernel.transform(test)
+    gk.fit_transform(train)
+    gk.transform(test)
 
 
 def test_graph_hopper():
@@ -971,12 +825,8 @@ def test_graph_hopper():
 
     gh_kernel = GraphHopper(verbose=verbose, normalize=normalize)
 
-    try:
-        gh_kernel.fit_transform(train)
-        gh_kernel.transform(test)
-        assert True
-    except Exception as exception:
-        assert False, exception
+    gh_kernel.fit_transform(train)
+    gh_kernel.transform(test)
 
 
 def test_graph_hopper_pd():
@@ -993,12 +843,8 @@ def test_graph_hopper_pd():
 
     gk = GraphKernel(kernel="GH", verbose=verbose, normalize=normalize, n_jobs=-1)
 
-    try:
-        gk.fit_transform(train)
-        gk.transform(test)
-        assert True
-    except Exception as exception:
-        assert False, exception
+    gk.fit_transform(train)
+    gk.transform(test)
 
 
 def test_core_framework():
@@ -1018,51 +864,7 @@ def test_core_framework():
 
     kernel = ["CORE", "WL"]
     gk = GraphKernel(kernel=kernel, verbose=verbose, normalize=normalize)
-    try:
-        core_framework.fit_transform(train)
-        core_framework.transform(test)
-        gk.fit_transform(train)
-        gk.transform(test)
-        assert True
-    except Exception as exception:
-        assert False, exception
-
-
-if __name__ == "__main__":
-    warnings.filterwarnings("once")
-    verbose = True
-
-    test_random_walk()
-    test_random_walk_pd()
-    test_random_walk_labels()
-    test_random_walk_labels_pd()
-    test_shortest_path()
-    test_shortest_path_pd()
-    test_graphlet_sampling()
-    test_weisfeiler_lehman()
-    test_weisfeiler_lehman_optimal_assignment()
-    test_weisfeiler_lehman_pd()
-    test_pyramid_match()
-    test_pyramid_match_no_labels()
-    test_neighborhood_hash()
-    test_neighborhood_hash_pd()
-    test_subgraph_matching()
-    test_subgraph_matching_pd()
-    test_neighborhood_subgraph_pairwise_distance()
-    if cvxopt:
-        test_lovasz_theta()
-        test_lovasz_theta_pd()
-    test_svm_theta()
-    test_svm_theta_pd()
-    test_odd_sth()
-    test_propagation()
-    test_propagation_pd()
-    test_hadamard_code()
-    test_hadamard_code_pd()
-    test_multiscale_laplacian()
-    test_multiscale_laplacian_pd()
-    test_vertex_histogram()
-    test_edge_histogram()
-    test_graph_hopper()
-    test_graph_hopper_pd()
-    test_core_framework()
+    core_framework.fit_transform(train)
+    core_framework.transform(test)
+    gk.fit_transform(train)
+    gk.transform(test)
