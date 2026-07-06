@@ -44,7 +44,7 @@ jobs:
 
     steps:
       - name: Checkout
-        uses: actions/checkout@v4
+        uses: actions/checkout@v7
 
       - name: Setup Python
         uses: actions/setup-python@v6
@@ -52,7 +52,7 @@ jobs:
           python-version: "3.13"
 
       - name: Install uv
-        uses: astral-sh/setup-uv@v6
+        uses: astral-sh/setup-uv@v7
         with:
           enable-cache: true
           cache-dependency-glob: "uv.lock"
@@ -63,7 +63,7 @@ jobs:
         continue-on-error: true
 
       - name: Restore ccache
-        uses: actions/cache@v5
+        uses: actions/cache@v6
         with:
           path: ~/.ccache
           key: ccache-docs-${{ hashFiles('setup.py', 'grakelx/kernels/_c_functions/functions.pyx', 'grakelx/kernels/_c_functions/include/functions.hpp', 'grakelx/kernels/_c_functions/src/ArashPartov.cpp', 'grakelx/kernels/_c_functions/src/sm_core.cpp', 'grakelx/kernels/_isomorphism/bliss.pyx', 'grakelx/kernels/_isomorphism/intpyblissmodule_2.cc', 'grakelx/kernels/_isomorphism/intpyblissmodule_3.cc', 'grakelx/kernels/_isomorphism/bliss-0.50/**') }}
@@ -94,10 +94,10 @@ jobs:
         run: uv run sphinx-build -b html doc doc/_build/html
 
       - name: Upload artifact
-        uses: actions/upload-pages-artifact@v3
+        uses: actions/upload-pages-artifact@v5
         with:
           path: doc/_build/html
 
       - name: Deploy to GitHub Pages
         id: deployment
-        uses: actions/deploy-pages@v4
+        uses: actions/deploy-pages@v5
