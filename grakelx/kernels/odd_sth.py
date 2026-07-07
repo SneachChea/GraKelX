@@ -602,24 +602,3 @@ def big_dag_append(dag, big_dag=None, merge_features=True):
             nodes_idx += 1
 
     return (D_vertices, D_hash_map, D_edges, D_labels)
-
-
-if __name__ == "__main__":
-    # Dag Example from original paper
-    tree_a = ({0, 1, 2, 3}, {0: [1, 2], 1: [3], 2: [], 3: []}, {0: "a", 1: "b", 2: "d", 3: "c"})
-    tree_b = (
-        {0, 1, 2, 3, 4},
-        {0: [1, 2], 1: [3], 2: [4], 3: [], 4: []},
-        {0: "a", 1: "b", 2: "c", 3: "c", 4: "d"},
-    )
-
-    todd_a = odd(tree_a[0], tree_a[1], tree_a[2])
-    todd_b = odd(tree_b[0], tree_b[1], tree_b[2])
-
-    Atree = tuple(hash_trees(todd_a)) + tuple([]) + (todd_a[1], todd_a[3])
-    Btree = tuple(hash_trees(todd_b)) + tuple([]) + (todd_b[1], todd_b[3])
-    big_dag = None
-    big_dag = big_dag_append(Atree, big_dag)
-    big_dag = big_dag_append(Btree, big_dag)
-
-    print("Tree A:\n", Atree, "\nTree B:\n", Btree, "\nBig Dag:\n", big_dag)

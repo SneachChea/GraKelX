@@ -81,6 +81,16 @@ target-version = ["py310"]
 profile = "black"
 line_length = 130
 
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+filterwarnings = [
+    "ignore::UserWarning",
+]
+markers = [
+    "slow: tests that require network access (dataset downloads)",
+    "cvxopt: tests requiring cvxopt (LovaszTheta, SvmTheta)",
+]
+
 [tool.ruff]
 line-length = 130
 target-version = "py310"
